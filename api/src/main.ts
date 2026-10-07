@@ -1,5 +1,6 @@
 import { Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { MikroORM } from '@mikro-orm/postgresql';
 import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { AppModule } from './app.module';
@@ -14,6 +15,8 @@ async function bootstrap() {
   SecurityAdapter(app, configService);
   ValidationAdapter(app);
   InitSwaggerAdapter(app);
+
+  await app.get(MikroORM).migrator.up();
 
   const port = configService.getOrThrow<number>('PORT');
   await app.listen(port);

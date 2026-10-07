@@ -1,5 +1,13 @@
 import { plainToInstance } from 'class-transformer';
-import { IsInt, IsUrl, Max, Min, validateSync } from 'class-validator';
+import {
+  IsInt,
+  IsNotEmpty,
+  IsString,
+  IsUrl,
+  Max,
+  Min,
+  validateSync,
+} from 'class-validator';
 
 export class EnvironmentVariables {
   @IsInt()
@@ -9,6 +17,10 @@ export class EnvironmentVariables {
 
   @IsUrl({ require_tld: false })
   CLIENT_DOMAIN: string = 'http://localhost:5173';
+
+  @IsString()
+  @IsNotEmpty()
+  DATABASE_URL!: string;
 }
 
 export function validate(config: Record<string, unknown>) {
@@ -16,6 +28,8 @@ export function validate(config: Record<string, unknown>) {
     enableImplicitConversion: true,
   });
   const errors = validateSync(validated, { skipMissingProperties: false });
-  if (errors.length) throw new Error(errors.toString());
+  if (errors.length) {
+    throw new Error(errors.toString());
+  }
   return validated;
 }
