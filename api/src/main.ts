@@ -10,6 +10,7 @@ import { ValidationAdapter } from './common/adapters/validation.adapter';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
+  app.enableShutdownHooks();
   const configService = app.get(ConfigService);
 
   SecurityAdapter(app, configService);

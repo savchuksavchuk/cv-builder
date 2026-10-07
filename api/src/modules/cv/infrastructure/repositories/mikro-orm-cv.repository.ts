@@ -10,6 +10,11 @@ import { cvSchema } from '../models/cv.schema';
 export class MikroOrmCvRepository implements CvRepository {
   constructor(private readonly em: EntityManager) {}
 
+  async findById(id: string): Promise<Cv | null> {
+    const model = await this.em.findOne(cvSchema, { id });
+    return model ? cvSchema.toDomain(model) : null;
+  }
+
   async findByIdForUser(id: string, userId: string): Promise<Cv | null> {
     const model = await this.em.findOne(cvSchema, { id, userId });
     return model ? cvSchema.toDomain(model) : null;

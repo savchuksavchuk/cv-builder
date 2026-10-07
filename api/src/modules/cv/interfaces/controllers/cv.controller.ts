@@ -1,7 +1,10 @@
 import {
   Body,
   Controller,
+  Get,
   HttpCode,
+  Param,
+  ParseUUIDPipe,
   Post,
   UploadedFile,
   UseGuards,
@@ -18,7 +21,8 @@ import {
   MAX_TARGET_ROLE_CHARS,
 } from '../../domain/constants/cv-limits.constants';
 import { InitCvDto } from '../../application/dto/init-cv.dto';
-import { InitCvResponseDTO } from '../../application/responses/init-cv-response.dto';
+import { CvResponseDTO } from '../../application/responses/cv-response.dto';
+import { GetCvUseCase } from '../../application/use-cases/get-cv.use-case';
 import { InitCvUseCase } from '../../application/use-cases/init-cv.use-case';
 
 @ApiTags('cvs')
@@ -26,7 +30,10 @@ import { InitCvUseCase } from '../../application/use-cases/init-cv.use-case';
 @UseGuards(AuthGuard)
 @ApiSecurity('session')
 export class CvController {
-  constructor(private readonly initCv: InitCvUseCase) {}
+  constructor(
+    private readonly initCv: InitCvUseCase,
+    private readonly getCv: GetCvUseCase,
+  ) {}
 
   @Post()
   @HttpCode(202)
@@ -50,5 +57,13 @@ export class CvController {
     @UploadedFile(new PdfFilePipe()) file?: Express.Multer.File,
   ) {
     return this.initCv.execute(user.sub, dto, file);
+  }
+
+  @Get(':id')
+  async get(
+    @CurrentUser() user: UserPayload,
+    @Param('id', ParseUUIDPipe) id: string,
+  ): Promise<CvResponseDTO> {
+    return this.getCv.execute(user.sub, id);
   }
 }

@@ -6,6 +6,7 @@ import { validate } from './config/env.validation';
 import mikroOrmConfig from './database/mikro-orm.config';
 import { AuthModule } from './modules/auth/auth.module';
 import { CvModule } from './modules/cv/cv.module';
+import { SharedModule } from './modules/shared/shared.module';
 import { UserModule } from './modules/user/user.module';
 
 @Module({
@@ -23,6 +24,7 @@ import { UserModule } from './modules/user/user.module';
         clientUrl: config.getOrThrow<string>('DATABASE_URL'),
       }),
     }),
+    SharedModule,
     UserModule,
     AuthModule,
     CvModule,

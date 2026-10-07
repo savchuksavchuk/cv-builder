@@ -18,6 +18,7 @@ export interface CvModel {
   currentStep: CvStep | null;
   failureReason: string | null;
   initialUserInput: string;
+  sourceFileKey: string | null;
   contacts: Contacts | null;
   summary: Summary | null;
   workExperience: WorkExperience[];
@@ -50,6 +51,7 @@ export class CvSchema extends EntitySchema<CvModel> {
         currentStep: { type: 'string', nullable: true },
         failureReason: { type: 'text', nullable: true },
         initialUserInput: { type: 'text' },
+        sourceFileKey: { type: 'string', nullable: true },
         contacts: { type: 'json', nullable: true },
         summary: { type: 'json', nullable: true },
         workExperience: { type: 'json' },
@@ -77,6 +79,7 @@ export class CvSchema extends EntitySchema<CvModel> {
     cv.currentStep = model.currentStep;
     cv.failureReason = model.failureReason;
     cv.initialUserInput = model.initialUserInput;
+    cv.sourceFileKey = model.sourceFileKey;
     cv.contacts = model.contacts;
     cv.summary = model.summary;
     cv.workExperience = model.workExperience;
