@@ -5,6 +5,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { validate } from './config/env.validation';
 import mikroOrmConfig from './database/mikro-orm.config';
 import { AuthModule } from './modules/auth/auth.module';
+import { CvModule } from './modules/cv/cv.module';
 import { UserModule } from './modules/user/user.module';
 
 @Module({
@@ -24,6 +25,7 @@ import { UserModule } from './modules/user/user.module';
     }),
     UserModule,
     AuthModule,
+    CvModule,
   ],
 })
 export class AppModule {}

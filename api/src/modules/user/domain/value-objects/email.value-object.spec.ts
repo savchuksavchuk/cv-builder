@@ -2,11 +2,11 @@ import { Email } from './email.value-object';
 
 describe('Email', () => {
   it('trims surrounding whitespace', () => {
-    expect(Email.create('  a@b.com  ').value).toBe('a@b.com');
+    expect(Email.create('  a@b.com  ').getValue()).toBe('a@b.com');
   });
 
   it('lowercases the value', () => {
-    expect(Email.create('A@B.Com').value).toBe('a@b.com');
+    expect(Email.create('A@B.Com').getValue()).toBe('a@b.com');
   });
 
   it('is equal to another email with the same normalized value', () => {

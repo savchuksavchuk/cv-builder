@@ -1,8 +1,12 @@
 export class Email {
-  private constructor(readonly value: string) {}
+  private constructor(private readonly value: string) {}
 
   static create(raw: string): Email {
     return new Email(raw.trim().toLowerCase());
+  }
+
+  getValue(): string {
+    return this.value;
   }
 
   equals(other: Email): boolean {

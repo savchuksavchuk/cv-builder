@@ -26,7 +26,7 @@ export class User {
   getSnapshot(): UserSnapshot {
     return Object.freeze({
       id: this.id,
-      email: this.email.value,
+      email: this.email.getValue(),
       passwordHash: this.passwordHash,
       createdAt: new Date(this.createdAt),
     });

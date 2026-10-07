@@ -11,7 +11,9 @@ export class MikroOrmUserRepository implements UserRepository {
   constructor(private readonly em: EntityManager) {}
 
   async findByEmail(email: Email): Promise<User | null> {
-    const model = await this.em.findOne(userSchema, { email: email.value });
+    const model = await this.em.findOne(userSchema, {
+      email: email.getValue(),
+    });
     return model ? userSchema.toDomain(model) : null;
   }
 
