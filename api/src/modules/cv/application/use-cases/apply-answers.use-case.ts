@@ -7,18 +7,20 @@ import { CV_REPOSITORY } from '../../domain/repositories/cv.repository';
 import type { CvRepository } from '../../domain/repositories/cv.repository';
 import { CvStatus } from '../../domain/types/cv-status';
 import { CvStep } from '../../domain/types/cv-step';
-import { INITIAL_USER_INPUT_SOURCE } from '../../domain/types/fact';
-import { wrapUntrusted } from '../../domain/utils/untrusted';
-import { EXTRACT_FACTS_SYSTEM } from '../llm/extract-facts.prompt';
 import {
-  extractedFactsOutput,
-  toCvSections,
-} from '../llm/extracted-facts.output';
+  answeredQuestions,
+  applyAnswersOutput,
+  toAnswerSections,
+} from '../llm/apply-answers.output';
+import {
+  APPLY_ANSWERS_SYSTEM,
+  buildApplyAnswersPrompt,
+} from '../llm/apply-answers.prompt';
 import { CV_JOBS_PORT } from '../ports/cv-jobs.port';
 import type { CvJobsPort } from '../ports/cv-jobs.port';
 
 @Injectable()
-export class ExtractFactsUseCase {
+export class ApplyAnswersUseCase {
   constructor(
     @Inject(CV_REPOSITORY) private readonly cvs: CvRepository,
     @Inject(CV_JOBS_PORT) private readonly jobs: CvJobsPort,
@@ -27,30 +29,29 @@ export class ExtractFactsUseCase {
   ) {}
 
   async execute(cv: Cv): Promise<void> {
-    const step = CvStep.ExtractFacts;
+    const answered = answeredQuestions(cv.questions);
 
-    const generated = await this.llm.generateObject({
-      model: STEP_MODELS[step]!,
-      schema: extractedFactsOutput,
-      system: EXTRACT_FACTS_SYSTEM,
-      prompt: wrapUntrusted(
-        'document',
-        INITIAL_USER_INPUT_SOURCE,
-        cv.initialUserInput,
+    const facts = answered.length ? await this.extractFacts(answered) : [];
+
+    const applied = cv.applyAnswers(
+      toAnswerSections(
+        {
+          contacts: cv.contacts,
+          workExperience: cv.workExperience,
+          education: cv.education,
+          certifications: cv.certifications,
+        },
+        answered,
+        facts,
       ),
-    });
-
-    if (!generated.success || !generated.dto) {
-      throw new Error(generated.message);
-    }
-
-    const applied = cv.applyExtractedFacts(toCvSections(generated.dto));
+    );
 
     if (!applied.success) {
       throw new Error(applied.message);
     }
 
-    const finished = cv.finishStep(step);
+    const finished = cv.finishStep(CvStep.ApplyAnswers);
+
     if (!finished.success) {
       throw new Error(finished.message);
     }
@@ -65,5 +66,20 @@ export class ExtractFactsUseCase {
         }
       }
     });
+  }
+
+  private async extractFacts(questions: ReturnType<typeof answeredQuestions>) {
+    const generated = await this.llm.generateObject({
+      model: STEP_MODELS[CvStep.ApplyAnswers]!,
+      schema: applyAnswersOutput,
+      system: APPLY_ANSWERS_SYSTEM,
+      prompt: buildApplyAnswersPrompt(questions),
+    });
+
+    if (!generated.success || !generated.dto) {
+      throw new Error(generated.message);
+    }
+
+    return generated.dto.facts;
   }
 }

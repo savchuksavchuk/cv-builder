@@ -1,14 +1,23 @@
 import { randomUUID } from 'node:crypto';
 import { Result, ResultBuilder } from '../../../../common/classes/result.class';
-import { MAX_INPUT_CHARS } from '../constants/cv-limits.constants';
-import { GENERATION_STEPS } from '../constants/cv-pipeline.constants';
+import {
+  MAX_INPUT_CHARS,
+  MAX_QUESTION_ROUNDS,
+} from '../constants/cv-limits.constants';
+import {
+  GENERATION_STEPS,
+  NEXT_STEP,
+} from '../constants/cv-pipeline.constants';
+import { QuestionDraft } from '../utils/question-paths';
 import { normalizeText } from '../utils/normalize-text';
+import { VerifiableSections, verifySections } from '../utils/verify-evidence';
 import { Certification } from '../types/certification';
 import { Contacts } from '../types/contacts';
 import { CvStatus } from '../types/cv-status';
 import { CvStep } from '../types/cv-step';
 import { Education } from '../types/education';
-import { Question } from '../types/question';
+import { INITIAL_USER_INPUT_SOURCE } from '../types/fact';
+import { Question, QuestionStatus } from '../types/question';
 import { Summary } from '../types/summary';
 import { WorkExperience } from '../types/work-experience';
 
@@ -152,7 +161,7 @@ export class Cv {
         .build();
     }
 
-    const next = GENERATION_STEPS[GENERATION_STEPS.indexOf(step) + 1];
+    const next = NEXT_STEP[step];
 
     if (next) {
       this.currentStep = next;
@@ -187,6 +196,155 @@ export class Cv {
     this.workExperience = sections.workExperience;
     this.education = sections.education;
     this.certifications = sections.certifications;
+    this.touch();
+
+    return builder.setSuccess(true).build();
+  }
+
+  verifyEvidence(): Result {
+    const builder = new ResultBuilder();
+
+    if (
+      this.status !== CvStatus.Processing ||
+      this.currentStep !== CvStep.VerifyEvidence
+    ) {
+      return builder
+        .setSuccess(false)
+        .setMessage(`CV is not processing step ${CvStep.VerifyEvidence}`)
+        .build();
+    }
+
+    const verified = verifySections(
+      {
+        contacts: this.contacts,
+        workExperience: this.workExperience,
+        education: this.education,
+        certifications: this.certifications,
+      },
+      (source) =>
+        source === INITIAL_USER_INPUT_SOURCE
+          ? this.initialUserInput
+          : (this.questions.find((q) => q.id === source)?.answer ?? null),
+    );
+
+    this.contacts = verified.contacts;
+    this.workExperience = verified.workExperience;
+    this.education = verified.education;
+    this.certifications = verified.certifications;
+    this.touch();
+
+    return builder.setSuccess(true).build();
+  }
+
+  askQuestions(drafts: QuestionDraft[]): Result {
+    const builder = new ResultBuilder();
+
+    if (
+      this.status !== CvStatus.Processing ||
+      this.currentStep !== CvStep.GenerateQuestions
+    ) {
+      return builder
+        .setSuccess(false)
+        .setMessage(`CV is not processing step ${CvStep.GenerateQuestions}`)
+        .build();
+    }
+
+    if (!drafts.length || this.questionRounds >= MAX_QUESTION_ROUNDS) {
+      this.currentStep = CvStep.TailorToRole;
+    } else {
+      const now = new Date().toISOString();
+
+      this.questions.push(
+        ...drafts.map((draft) => ({
+          id: randomUUID(),
+          path: draft.path,
+          question: draft.question,
+          status: QuestionStatus.Open,
+          answer: null,
+          createdAt: now,
+          updatedAt: now,
+        })),
+      );
+      this.questionRounds += 1;
+      this.currentStep = CvStep.AnswerQuestions;
+    }
+    this.touch();
+
+    return builder.setSuccess(true).build();
+  }
+
+  submitAnswers(
+    answers: { questionId: string; answer: string | null }[],
+  ): Result {
+    const builder = new ResultBuilder();
+
+    if (
+      this.status !== CvStatus.Processing ||
+      this.currentStep !== CvStep.AnswerQuestions
+    ) {
+      return builder
+        .setSuccess(false)
+        .setMessage(`CV is not waiting for answers`)
+        .build();
+    }
+
+    const open = this.questions.filter((q) => q.status === QuestionStatus.Open);
+    const ids = new Set(answers.map((a) => a.questionId));
+
+    if (
+      ids.size !== answers.length ||
+      ids.size !== open.length ||
+      open.some((q) => !ids.has(q.id))
+    ) {
+      return builder
+        .setSuccess(false)
+        .setMessage('Answers must cover each open question exactly once')
+        .build();
+    }
+
+    const now = new Date().toISOString();
+    for (const question of open) {
+      const text = normalizeText(
+        answers.find((a) => a.questionId === question.id)?.answer ?? '',
+      );
+      question.answer = text || null;
+      question.status = text
+        ? QuestionStatus.Answered
+        : QuestionStatus.Dismissed;
+      question.updatedAt = now;
+    }
+
+    this.currentStep = CvStep.ApplyAnswers;
+    this.touch();
+
+    return builder.setSuccess(true).build();
+  }
+
+  applyAnswers(sections: VerifiableSections): Result {
+    const builder = new ResultBuilder();
+
+    if (
+      this.status !== CvStatus.Processing ||
+      this.currentStep !== CvStep.ApplyAnswers
+    ) {
+      return builder
+        .setSuccess(false)
+        .setMessage(`CV is not processing step ${CvStep.ApplyAnswers}`)
+        .build();
+    }
+
+    this.contacts = sections.contacts;
+    this.workExperience = sections.workExperience;
+    this.education = sections.education;
+    this.certifications = sections.certifications;
+
+    const now = new Date().toISOString();
+    for (const question of this.questions) {
+      if (question.status === QuestionStatus.Answered) {
+        question.status = QuestionStatus.Applied;
+        question.updatedAt = now;
+      }
+    }
     this.touch();
 
     return builder.setSuccess(true).build();

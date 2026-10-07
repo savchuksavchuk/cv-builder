@@ -1,3 +1,5 @@
+export const INITIAL_USER_INPUT_SOURCE = 'initial_user_input';
+
 export enum FactOrigin {
   Ai = 'ai',
   User = 'user',

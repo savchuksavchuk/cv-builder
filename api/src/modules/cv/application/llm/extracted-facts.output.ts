@@ -3,10 +3,13 @@ import { z } from 'zod';
 import { Certification } from '../../domain/types/certification';
 import { Contacts } from '../../domain/types/contacts';
 import { Education } from '../../domain/types/education';
-import { Fact, FactOrigin, Item } from '../../domain/types/fact';
+import {
+  Fact,
+  FactOrigin,
+  INITIAL_USER_INPUT_SOURCE,
+  Item,
+} from '../../domain/types/fact';
 import { WorkExperience } from '../../domain/types/work-experience';
-
-export const INITIAL_USER_INPUT_SOURCE = 'initial_user_input';
 
 export enum FactSection {
   Contacts = 'contacts',
@@ -100,16 +103,22 @@ export type CvSections = {
 
 type Entry = Map<FactField, ExtractedFact[]>;
 
-const toFact = <T extends string = string>(raw?: ExtractedFact): Fact<T> => ({
+export type RawFact = { value: string; quote: string };
+
+export const toFact = <T extends string = string>(
+  raw: RawFact | undefined,
+  source: string = INITIAL_USER_INPUT_SOURCE,
+): Fact<T> => ({
   value: (raw?.value.trim() || null) as T | null,
-  evidence: raw?.quote.trim()
-    ? { source: INITIAL_USER_INPUT_SOURCE, quote: raw.quote.trim() }
-    : null,
+  evidence: raw?.quote.trim() ? { source, quote: raw.quote.trim() } : null,
   origin: FactOrigin.Ai,
 });
 
-const toItems = (raws: ExtractedFact[] = []): Item<Fact>[] =>
-  raws.map((raw) => ({ id: randomUUID(), ...toFact(raw) }));
+export const toItems = (
+  raws: RawFact[] = [],
+  source: string = INITIAL_USER_INPUT_SOURCE,
+): Item<Fact>[] =>
+  raws.map((raw) => ({ id: randomUUID(), ...toFact(raw, source) }));
 
 function groupEntries(facts: ExtractedFact[], section: FactSection): Entry[] {
   const byEntry = new Map<number, Entry>();
@@ -135,11 +144,13 @@ function groupEntries(facts: ExtractedFact[], section: FactSection): Entry[] {
 
 export function toCvSections(
   output: z.infer<typeof extractedFactsOutput>,
+  source: string = INITIAL_USER_INPUT_SOURCE,
 ): CvSections {
   const { facts } = output;
   const first = (entry: Entry, field: FactField) =>
-    toFact(entry.get(field)?.[0]);
-  const all = (entry: Entry, field: FactField) => toItems(entry.get(field));
+    toFact(entry.get(field)?.[0], source);
+  const all = (entry: Entry, field: FactField) =>
+    toItems(entry.get(field), source);
   const [contacts = new Map<FactField, ExtractedFact[]>()] = groupEntries(
     facts.map((fact) => ({ ...fact, entry: 0 })),
     FactSection.Contacts,

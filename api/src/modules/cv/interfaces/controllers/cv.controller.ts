@@ -22,6 +22,8 @@ import {
 } from '../../domain/constants/cv-limits.constants';
 import { InitCvDto } from '../../application/dto/init-cv.dto';
 import { CvResponseDTO } from '../../application/responses/cv-response.dto';
+import { SubmitAnswersDto } from '../../application/dto/submit-answers.dto';
+import { SubmitAnswersUseCase } from '../../application/use-cases/submit-answers.use-case';
 import { GetCvUseCase } from '../../application/use-cases/get-cv.use-case';
 import { InitCvUseCase } from '../../application/use-cases/init-cv.use-case';
 
@@ -33,6 +35,7 @@ export class CvController {
   constructor(
     private readonly initCv: InitCvUseCase,
     private readonly getCv: GetCvUseCase,
+    private readonly submitAnswers: SubmitAnswersUseCase,
   ) {}
 
   @Post()
@@ -65,5 +68,15 @@ export class CvController {
     @Param('id', ParseUUIDPipe) id: string,
   ): Promise<CvResponseDTO> {
     return this.getCv.execute(user.sub, id);
+  }
+
+  @Post(':id/answers')
+  @HttpCode(202)
+  async answer(
+    @CurrentUser() user: UserPayload,
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() dto: SubmitAnswersDto,
+  ): Promise<CvResponseDTO> {
+    return this.submitAnswers.execute(user.sub, id, dto);
   }
 }

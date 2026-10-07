@@ -1,7 +1,7 @@
 import { MikroORM } from '@mikro-orm/postgresql';
 import { Injectable } from '@nestjs/common';
 import { QueueService } from '../../../shared/services/queue.service';
-import { AdvanceCvStepUseCase } from '../../application/use-cases/advance-cv-step.use-case';
+import { VerifyEvidenceUseCase } from '../../application/use-cases/verify-evidence.use-case';
 import { FailCvUseCase } from '../../application/use-cases/fail-cv.use-case';
 import { Cv } from '../../domain/entities/cv.entity';
 import { CvStep } from '../../domain/types/cv-step';
@@ -15,12 +15,12 @@ export class VerifyEvidenceWorker extends CvStepWorker {
     queue: QueueService,
     orm: MikroORM,
     failCv: FailCvUseCase,
-    private readonly advanceStep: AdvanceCvStepUseCase,
+    private readonly verifyEvidence: VerifyEvidenceUseCase,
   ) {
     super(queue, orm, failCv);
   }
 
   protected run(cv: Cv): Promise<void> {
-    return this.advanceStep.execute(cv, this.step);
+    return this.verifyEvidence.execute(cv);
   }
 }
