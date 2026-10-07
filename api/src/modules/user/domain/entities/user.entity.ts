@@ -9,10 +9,10 @@ export type UserSnapshot = Readonly<{
 }>;
 
 export class User {
-  id!: string;
-  email!: Email;
-  passwordHash!: string;
-  createdAt!: Date;
+  id: string;
+  email: Email;
+  passwordHash: string;
+  createdAt: Date;
 
   static create(email: Email, passwordHash: string): User {
     const user = new User();

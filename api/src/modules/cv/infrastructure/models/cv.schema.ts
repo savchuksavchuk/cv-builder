@@ -1,4 +1,5 @@
 import { EntitySchema } from '@mikro-orm/core';
+import { MAX_TARGET_ROLE_CHARS } from '../../domain/constants/cv-limits.constants';
 import { Cv } from '../../domain/entities/cv.entity';
 import { Certification } from '../../domain/types/certification';
 import { Contacts } from '../../domain/types/contacts';
@@ -23,6 +24,7 @@ export interface CvModel {
   education: Education[];
   certifications: Certification[];
   questions: Question[];
+  questionRounds: number;
   version: number;
   createdAt: Date;
   updatedAt: Date;
@@ -43,7 +45,7 @@ export class CvSchema extends EntitySchema<CvModel> {
           deleteRule: 'cascade',
           index: true,
         },
-        targetRole: { type: 'string', length: 120 },
+        targetRole: { type: 'string', length: MAX_TARGET_ROLE_CHARS },
         status: { type: 'string' },
         currentStep: { type: 'string', nullable: true },
         failureReason: { type: 'text', nullable: true },
@@ -54,6 +56,7 @@ export class CvSchema extends EntitySchema<CvModel> {
         education: { type: 'json' },
         certifications: { type: 'json' },
         questions: { type: 'json' },
+        questionRounds: { type: 'number', default: 0 },
         version: { type: 'number', version: true },
         createdAt: { type: 'Date' },
         updatedAt: { type: 'Date' },
@@ -80,6 +83,7 @@ export class CvSchema extends EntitySchema<CvModel> {
     cv.education = model.education;
     cv.certifications = model.certifications;
     cv.questions = model.questions;
+    cv.questionRounds = model.questionRounds;
     cv.version = model.version;
     cv.createdAt = model.createdAt;
     cv.updatedAt = model.updatedAt;

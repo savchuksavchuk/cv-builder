@@ -5,11 +5,11 @@ import { UserSnapshot } from '../../domain/entities/user.entity';
 export class MeResponseDTO {
   @ApiProperty()
   @Expose()
-  id!: string;
+  id: string;
 
   @ApiProperty()
   @Expose()
-  email!: string;
+  email: string;
 
   static toResponse(user: UserSnapshot): MeResponseDTO {
     return plainToInstance(MeResponseDTO, user, {

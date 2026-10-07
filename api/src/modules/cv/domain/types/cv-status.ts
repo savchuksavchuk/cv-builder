@@ -1,7 +1,7 @@
 export enum CvStatus {
-  Queued = 'queued',
+  Initial = 'initial',
   Generating = 'generating',
+  PendingQuestions = 'pending_questions',
   Ready = 'ready',
   Failed = 'failed',
-  Updating = 'updating',
 }

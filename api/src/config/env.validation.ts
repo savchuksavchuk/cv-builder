@@ -20,7 +20,7 @@ export class EnvironmentVariables {
 
   @IsString()
   @IsNotEmpty()
-  DATABASE_URL!: string;
+  DATABASE_URL: string;
 }
 
 export function validate(config: Record<string, unknown>) {
