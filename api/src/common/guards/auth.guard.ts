@@ -10,7 +10,7 @@ import type { UserPayload } from '../types/user-payload.type';
 import { SESSION_REPOSITORY } from '../../modules/auth/domain/repositories/session.repository';
 import type { SessionRepository } from '../../modules/auth/domain/repositories/session.repository';
 
-export const SESSION_HEADER = 'x-session-id';
+export const SESSION_COOKIE = 'sid';
 
 export type AuthenticatedRequest = Request & {
   user: UserPayload;
@@ -26,7 +26,9 @@ export class AuthGuard implements CanActivate {
 
   canActivate(context: ExecutionContext): boolean {
     const req = context.switchToHttp().getRequest<AuthenticatedRequest>();
-    const sessionId = req.header(SESSION_HEADER);
+    const sessionId = (req.cookies as Record<string, string> | undefined)?.[
+      SESSION_COOKIE
+    ];
     const payload = sessionId ? this.sessions.get(sessionId) : undefined;
     if (!sessionId || !payload) {
       throw new UnauthorizedException();

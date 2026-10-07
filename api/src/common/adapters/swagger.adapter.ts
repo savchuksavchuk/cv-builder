@@ -15,10 +15,7 @@ export const InitSwaggerAdapter = (app: INestApplication): void => {
     .setDescription(SwaggerConfig.description)
     .setVersion(SwaggerConfig.version)
     .addTag(SwaggerConfig.tag)
-    .addApiKey(
-      { type: 'apiKey', in: 'header', name: 'x-session-id' },
-      'session',
-    )
+    .addCookieAuth('sid', undefined, 'session')
     .build();
 
   const document = SwaggerModule.createDocument(app, config);

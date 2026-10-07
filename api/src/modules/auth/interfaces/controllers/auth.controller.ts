@@ -14,7 +14,7 @@ import { SignOutUseCase } from '../../application/use-cases/sign-out.use-case';
 import { SignUpUseCase } from '../../application/use-cases/sign-up.use-case';
 import {
   AuthGuard,
-  SESSION_HEADER,
+  SESSION_COOKIE,
 } from '../../../../common/guards/auth.guard';
 import type { AuthenticatedRequest } from '../../../../common/guards/auth.guard';
 import { CredentialsDto } from '../../application/dto/credentials.dto';
@@ -41,14 +41,22 @@ export class AuthController {
   ): Promise<void> {
     const sessionId = await this.signIn.execute(dto.email, dto.password);
 
-    res.setHeader(SESSION_HEADER, sessionId);
+    res.cookie(SESSION_COOKIE, sessionId, {
+      httpOnly: true,
+      sameSite: 'lax',
+      secure: process.env.NODE_ENV === 'production',
+    });
   }
 
   @Post('sign-out')
   @HttpCode(204)
   @UseGuards(AuthGuard)
   @ApiSecurity('session')
-  signOutHandler(@Req() req: AuthenticatedRequest): void {
+  signOutHandler(
+    @Req() req: AuthenticatedRequest,
+    @Res({ passthrough: true }) res: Response,
+  ): void {
     this.signOut.execute(req.sessionId);
+    res.clearCookie(SESSION_COOKIE);
   }
 }

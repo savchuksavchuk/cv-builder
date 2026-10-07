@@ -1,6 +1,5 @@
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { ConfigService } from '@nestjs/config';
-import { SESSION_HEADER } from '../guards/auth.guard';
 import cookieParser from 'cookie-parser';
 import helmet from 'helmet';
 
@@ -17,7 +16,6 @@ export const SecurityAdapter = (
     origin: getAllowedOrigins(configService),
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
-    exposedHeaders: [SESSION_HEADER],
   });
 
   app.use(helmet());
