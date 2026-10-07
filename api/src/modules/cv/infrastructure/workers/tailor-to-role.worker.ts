@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { QueueService } from '../../../shared/services/queue.service';
 import { AdvanceCvStepUseCase } from '../../application/use-cases/advance-cv-step.use-case';
 import { FailCvUseCase } from '../../application/use-cases/fail-cv.use-case';
+import { Cv } from '../../domain/entities/cv.entity';
 import { CvStep } from '../../domain/types/cv-step';
 import { CvStepWorker } from './cv-step.worker';
 
@@ -19,7 +20,7 @@ export class TailorToRoleWorker extends CvStepWorker {
     super(queue, orm, failCv);
   }
 
-  protected run(cvId: string): Promise<void> {
-    return this.advanceStep.execute(cvId, this.step);
+  protected run(cv: Cv): Promise<void> {
+    return this.advanceStep.execute(cv, this.step);
   }
 }

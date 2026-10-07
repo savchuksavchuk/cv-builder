@@ -165,6 +165,33 @@ export class Cv {
     return builder.setSuccess(true).build();
   }
 
+  applyExtractedFacts(sections: {
+    contacts: Contacts;
+    workExperience: WorkExperience[];
+    education: Education[];
+    certifications: Certification[];
+  }): Result {
+    const builder = new ResultBuilder();
+
+    if (
+      this.status !== CvStatus.Processing ||
+      this.currentStep !== CvStep.ExtractFacts
+    ) {
+      return builder
+        .setSuccess(false)
+        .setMessage(`CV is not processing step ${CvStep.ExtractFacts}`)
+        .build();
+    }
+
+    this.contacts = sections.contacts;
+    this.workExperience = sections.workExperience;
+    this.education = sections.education;
+    this.certifications = sections.certifications;
+    this.touch();
+
+    return builder.setSuccess(true).build();
+  }
+
   applyPdfText(pdfText: string): Result {
     const builder = new ResultBuilder();
 

@@ -21,6 +21,10 @@ export class EnvironmentVariables {
   @IsString()
   @IsNotEmpty()
   DATABASE_URL: string;
+
+  @IsString()
+  @IsNotEmpty()
+  ANTHROPIC_API_KEY: string;
 }
 
 export function validate(config: Record<string, unknown>) {

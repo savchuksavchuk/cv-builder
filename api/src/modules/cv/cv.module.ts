@@ -4,6 +4,7 @@ import { SessionModule } from '../auth/session.module';
 import { CV_JOBS_PORT } from './application/ports/cv-jobs.port';
 import { FILE_STORAGE_PORT } from './application/ports/file-storage.port';
 import { PDF_TEXT_PORT } from './application/ports/pdf-text.port';
+import { ExtractFactsUseCase } from './application/use-cases/extract-facts.use-case';
 import { ParsePdfUseCase } from './application/use-cases/parse-pdf.use-case';
 import { AdvanceCvStepUseCase } from './application/use-cases/advance-cv-step.use-case';
 import { FailCvUseCase } from './application/use-cases/fail-cv.use-case';
@@ -29,6 +30,7 @@ import { CvController } from './interfaces/controllers/cv.controller';
     InitCvUseCase,
     GetCvUseCase,
     AdvanceCvStepUseCase,
+    ExtractFactsUseCase,
     ParsePdfUseCase,
     FailCvUseCase,
     ParsePdfWorker,

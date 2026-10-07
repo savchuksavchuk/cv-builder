@@ -6,8 +6,6 @@ export enum FactOrigin {
 export type Evidence = {
   source: string;
   quote: string;
-  start: number;
-  end: number;
 };
 
 export type Fact<T = string> = {

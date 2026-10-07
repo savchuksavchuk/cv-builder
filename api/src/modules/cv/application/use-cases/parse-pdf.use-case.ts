@@ -4,7 +4,6 @@ import { TransactionService } from '../../../shared/services/transaction.service
 import { Cv } from '../../domain/entities/cv.entity';
 import { CV_REPOSITORY } from '../../domain/repositories/cv.repository';
 import type { CvRepository } from '../../domain/repositories/cv.repository';
-import { CvStatus } from '../../domain/types/cv-status';
 import { CvStep } from '../../domain/types/cv-step';
 import { CV_JOBS_PORT } from '../ports/cv-jobs.port';
 import type { CvJobsPort } from '../ports/cv-jobs.port';
@@ -25,24 +24,7 @@ export class ParsePdfUseCase {
     private readonly transaction: TransactionService,
   ) {}
 
-  async execute(cvId: string): Promise<void> {
-    const cv = await this.cvs.findById(cvId);
-
-    if (!cv) {
-      throw new Error(`CV ${cvId} is not visible yet`);
-    }
-
-    if (cv.status !== CvStatus.Processing) {
-      return;
-    }
-
-    if (cv.currentStep !== CvStep.ParsePdf) {
-      if (cv.isBeforeStep(CvStep.ParsePdf)) {
-        throw new Error(`Step ${CvStep.ParsePdf} is not current yet`);
-      }
-      return;
-    }
-
+  async execute(cv: Cv): Promise<void> {
     const fileKey = cv.sourceFileKey;
     const parsed = await this.parse(cv);
 

@@ -21,6 +21,7 @@
     "migration:create": "nest build && MIKRO_ORM_MIGRATIONS_PATH=src/database/migrations mikro-orm migration:create"
   },
   "dependencies": {
+    "@ai-sdk/anthropic": "^4.0.75",
     "@mikro-orm/core": "^7.2.4",
     "@mikro-orm/migrations": "^7.2.4",
     "@mikro-orm/nestjs": "^7.1.0",
@@ -30,6 +31,7 @@
     "@nestjs/core": "^11.0.1",
     "@nestjs/platform-express": "^11.0.1",
     "@nestjs/swagger": "^11.4.7",
+    "ai": "^7.0.131",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.15.1",
     "cookie-parser": "^1.4.7",
