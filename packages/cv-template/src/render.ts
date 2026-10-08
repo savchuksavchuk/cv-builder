@@ -32,7 +32,11 @@ p, ul { margin: 0; }
 ul { padding-left: 18px; }
 .muted { color: #555; }
 .row { display: flex; justify-content: space-between; gap: 12px; }
-.item { margin-bottom: 8px; break-inside: avoid; }
+.item { margin-bottom: 8px; }
+.keep { break-inside: avoid; }
+h2, .row { break-after: avoid; }
+li, .row { break-inside: avoid; }
+p, li { orphans: 2; widows: 2; }
 .item strong { font-weight: 600; }
 `
 
@@ -77,7 +81,7 @@ const renderEducation = ({ education }: CvDocument) =>
         ', ',
       )
       return heading
-        ? `<div class="item"><div class="row"><strong>${heading}</strong><span class="muted">${esc(
+        ? `<div class="item keep"><div class="row"><strong>${heading}</strong><span class="muted">${esc(
             period(e.startDate, e.endDate),
           )}</span></div></div>`
         : ''
@@ -92,7 +96,7 @@ const renderCertifications = ({ certifications }: CvDocument) =>
         return ''
       }
       const issuer = clean(c.issuer)
-      return `<div class="item"><div class="row"><strong>${esc(name)}${
+      return `<div class="item keep"><div class="row"><strong>${esc(name)}${
         issuer ? `, ${esc(issuer)}` : ''
       }</strong><span class="muted">${esc(c.issueDate ?? '')}</span></div></div>`
     })
