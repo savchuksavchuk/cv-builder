@@ -1,13 +1,13 @@
 import { EntitySchema } from '@mikro-orm/core';
 import { MAX_TARGET_ROLE_CHARS } from '../../domain/constants/cv-limits.constants';
 import { Cv } from '../../domain/entities/cv.entity';
+import { CvDocument } from '../../domain/types/cv-document';
 import { Certification } from '../../domain/types/certification';
 import { Contacts } from '../../domain/types/contacts';
 import { CvStatus } from '../../domain/types/cv-status';
 import { CvStep } from '../../domain/types/cv-step';
 import { Education } from '../../domain/types/education';
 import { Question } from '../../domain/types/question';
-import { Summary } from '../../domain/types/summary';
 import { WorkExperience } from '../../domain/types/work-experience';
 
 export interface CvModel {
@@ -20,12 +20,14 @@ export interface CvModel {
   initialUserInput: string;
   sourceFileKey: string | null;
   contacts: Contacts | null;
-  summary: Summary | null;
+  document: CvDocument | null;
   workExperience: WorkExperience[];
   education: Education[];
   certifications: Certification[];
   questions: Question[];
   questionRounds: number;
+  composeRegenerations: number;
+  composeFeedback: string[];
   version: number;
   createdAt: Date;
   updatedAt: Date;
@@ -53,12 +55,14 @@ export class CvSchema extends EntitySchema<CvModel> {
         initialUserInput: { type: 'text' },
         sourceFileKey: { type: 'string', nullable: true },
         contacts: { type: 'json', nullable: true },
-        summary: { type: 'json', nullable: true },
+        document: { type: 'json', nullable: true },
         workExperience: { type: 'json' },
         education: { type: 'json' },
         certifications: { type: 'json' },
         questions: { type: 'json' },
         questionRounds: { type: 'number', default: 0 },
+        composeRegenerations: { type: 'number', default: 0 },
+        composeFeedback: { type: 'json', defaultRaw: "'[]'" },
         version: { type: 'number', version: true },
         createdAt: { type: 'Date' },
         updatedAt: { type: 'Date' },
@@ -81,12 +85,14 @@ export class CvSchema extends EntitySchema<CvModel> {
     cv.initialUserInput = model.initialUserInput;
     cv.sourceFileKey = model.sourceFileKey;
     cv.contacts = model.contacts;
-    cv.summary = model.summary;
+    cv.document = model.document;
     cv.workExperience = model.workExperience;
     cv.education = model.education;
     cv.certifications = model.certifications;
     cv.questions = model.questions;
     cv.questionRounds = model.questionRounds;
+    cv.composeRegenerations = model.composeRegenerations;
+    cv.composeFeedback = model.composeFeedback;
     cv.version = model.version;
     cv.createdAt = model.createdAt;
     cv.updatedAt = model.updatedAt;

@@ -3,6 +3,7 @@ import { Result, ResultBuilder } from '../../../../common/classes/result.class';
 import {
   MAX_INPUT_CHARS,
   MAX_QUESTION_ROUNDS,
+  MAX_COMPOSE_REGENERATIONS,
 } from '../constants/cv-limits.constants';
 import {
   GENERATION_STEPS,
@@ -11,6 +12,7 @@ import {
 import { QuestionDraft } from '../utils/question-paths';
 import { normalizeText } from '../utils/normalize-text';
 import { VerifiableSections, verifySections } from '../utils/verify-evidence';
+import { CvDocument } from '../types/cv-document';
 import { Certification } from '../types/certification';
 import { Contacts } from '../types/contacts';
 import { CvStatus } from '../types/cv-status';
@@ -18,7 +20,6 @@ import { CvStep } from '../types/cv-step';
 import { Education } from '../types/education';
 import { INITIAL_USER_INPUT_SOURCE } from '../types/fact';
 import { Question, QuestionStatus } from '../types/question';
-import { Summary } from '../types/summary';
 import { WorkExperience } from '../types/work-experience';
 
 export type CvSnapshot = Readonly<{
@@ -31,12 +32,14 @@ export type CvSnapshot = Readonly<{
   initialUserInput: string;
   sourceFileKey: string | null;
   contacts: Contacts | null;
-  summary: Summary | null;
+  document: CvDocument | null;
   workExperience: WorkExperience[];
   education: Education[];
   certifications: Certification[];
   questions: Question[];
   questionRounds: number;
+  composeRegenerations: number;
+  composeFeedback: string[];
   version: number;
   createdAt: Date;
   updatedAt: Date;
@@ -52,12 +55,14 @@ export class Cv {
   initialUserInput: string;
   sourceFileKey: string | null;
   contacts: Contacts | null;
-  summary: Summary | null;
+  document: CvDocument | null;
   workExperience: WorkExperience[];
   education: Education[];
   certifications: Certification[];
   questions: Question[];
   questionRounds: number;
+  composeRegenerations: number;
+  composeFeedback: string[];
   version: number;
   createdAt: Date;
   updatedAt: Date;
@@ -79,12 +84,14 @@ export class Cv {
     cv.initialUserInput = normalizeText(rawText);
     cv.sourceFileKey = sourceFileKey;
     cv.contacts = null;
-    cv.summary = null;
+    cv.document = null;
     cv.workExperience = [];
     cv.education = [];
     cv.certifications = [];
     cv.questions = [];
     cv.questionRounds = 0;
+    cv.composeRegenerations = 0;
+    cv.composeFeedback = [];
     cv.version = 1;
     cv.createdAt = now;
     cv.updatedAt = now;
@@ -250,7 +257,7 @@ export class Cv {
     }
 
     if (!drafts.length || this.questionRounds >= MAX_QUESTION_ROUNDS) {
-      this.currentStep = CvStep.TailorToRole;
+      this.currentStep = CvStep.ComposeCv;
     } else {
       const now = new Date().toISOString();
 
@@ -350,6 +357,67 @@ export class Cv {
     return builder.setSuccess(true).build();
   }
 
+  applyComposition(document: CvDocument): Result {
+    const builder = new ResultBuilder();
+
+    if (
+      this.status !== CvStatus.Processing ||
+      this.currentStep !== CvStep.ComposeCv
+    ) {
+      return builder
+        .setSuccess(false)
+        .setMessage(`CV is not processing step ${CvStep.ComposeCv}`)
+        .build();
+    }
+
+    this.document = document;
+    this.touch();
+
+    return builder.setSuccess(true).build();
+  }
+
+  applyValidation(document: CvDocument): Result {
+    const builder = new ResultBuilder();
+
+    if (
+      this.status !== CvStatus.Processing ||
+      this.currentStep !== CvStep.ValidateResult
+    ) {
+      return builder
+        .setSuccess(false)
+        .setMessage(`CV is not processing step ${CvStep.ValidateResult}`)
+        .build();
+    }
+
+    this.document = document;
+    this.composeFeedback = [];
+    this.touch();
+
+    return builder.setSuccess(true).build();
+  }
+
+  rejectComposition(feedback: string[]): Result {
+    const builder = new ResultBuilder();
+
+    if (
+      this.status !== CvStatus.Processing ||
+      this.currentStep !== CvStep.ValidateResult ||
+      this.composeRegenerations >= MAX_COMPOSE_REGENERATIONS
+    ) {
+      return builder
+        .setSuccess(false)
+        .setMessage('CV composition cannot be regenerated')
+        .build();
+    }
+
+    this.composeRegenerations += 1;
+    this.composeFeedback = feedback;
+    this.currentStep = CvStep.ComposeCv;
+    this.touch();
+
+    return builder.setSuccess(true).build();
+  }
+
   applyPdfText(pdfText: string): Result {
     const builder = new ResultBuilder();
 
@@ -402,12 +470,14 @@ export class Cv {
       initialUserInput: this.initialUserInput,
       sourceFileKey: this.sourceFileKey,
       contacts: this.contacts,
-      summary: this.summary,
+      document: this.document,
       workExperience: this.workExperience,
       education: this.education,
       certifications: this.certifications,
       questions: this.questions,
       questionRounds: this.questionRounds,
+      composeRegenerations: this.composeRegenerations,
+      composeFeedback: this.composeFeedback,
       version: this.version,
       createdAt: this.createdAt,
       updatedAt: this.updatedAt,

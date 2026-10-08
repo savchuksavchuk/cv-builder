@@ -6,7 +6,8 @@ import { FILE_STORAGE_PORT } from './application/ports/file-storage.port';
 import { PDF_TEXT_PORT } from './application/ports/pdf-text.port';
 import { ExtractFactsUseCase } from './application/use-cases/extract-facts.use-case';
 import { ParsePdfUseCase } from './application/use-cases/parse-pdf.use-case';
-import { AdvanceCvStepUseCase } from './application/use-cases/advance-cv-step.use-case';
+import { ComposeCvUseCase } from './application/use-cases/compose-cv.use-case';
+import { ValidateResultUseCase } from './application/use-cases/validate-result.use-case';
 import { FailCvUseCase } from './application/use-cases/fail-cv.use-case';
 import { GenerateQuestionsUseCase } from './application/use-cases/generate-questions.use-case';
 import { VerifyEvidenceUseCase } from './application/use-cases/verify-evidence.use-case';
@@ -19,7 +20,8 @@ import { ApplyAnswersWorker } from './infrastructure/workers/apply-answers.worke
 import { ExtractFactsWorker } from './infrastructure/workers/extract-facts.worker';
 import { GenerateQuestionsWorker } from './infrastructure/workers/generate-questions.worker';
 import { ParsePdfWorker } from './infrastructure/workers/parse-pdf.worker';
-import { TailorToRoleWorker } from './infrastructure/workers/tailor-to-role.worker';
+import { ComposeCvWorker } from './infrastructure/workers/compose-cv.worker';
+import { ValidateResultWorker } from './infrastructure/workers/validate-result.worker';
 import { VerifyEvidenceWorker } from './infrastructure/workers/verify-evidence.worker';
 import { cvSchema } from './infrastructure/models/cv.schema';
 import { CvJobsPortImplementation } from './infrastructure/ports/cv-jobs.port-implementation';
@@ -34,7 +36,8 @@ import { CvController } from './interfaces/controllers/cv.controller';
   providers: [
     InitCvUseCase,
     GetCvUseCase,
-    AdvanceCvStepUseCase,
+    ComposeCvUseCase,
+    ValidateResultUseCase,
     ExtractFactsUseCase,
     ApplyAnswersUseCase,
     SubmitAnswersUseCase,
@@ -46,7 +49,8 @@ import { CvController } from './interfaces/controllers/cv.controller';
     ExtractFactsWorker,
     ApplyAnswersWorker,
     VerifyEvidenceWorker,
-    TailorToRoleWorker,
+    ComposeCvWorker,
+    ValidateResultWorker,
     GenerateQuestionsWorker,
     { provide: CV_REPOSITORY, useClass: MikroOrmCvRepository },
     { provide: PDF_TEXT_PORT, useClass: PdfTextPortImplementation },

@@ -25,6 +25,40 @@
           "enumItems": [],
           "mappedType": "json"
         },
+        "compose_feedback": {
+          "name": "compose_feedback",
+          "type": "jsonb",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "default": "'[]'",
+          "comment": null,
+          "collation": null,
+          "enumItems": [],
+          "mappedType": "json"
+        },
+        "compose_regenerations": {
+          "name": "compose_regenerations",
+          "type": "int",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "default": "0",
+          "comment": null,
+          "collation": null,
+          "enumItems": [],
+          "mappedType": "integer"
+        },
         "contacts": {
           "name": "contacts",
           "type": "jsonb",
@@ -75,6 +109,23 @@
           "collation": null,
           "enumItems": [],
           "mappedType": "string"
+        },
+        "document": {
+          "name": "document",
+          "type": "jsonb",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "default": null,
+          "comment": null,
+          "collation": null,
+          "enumItems": [],
+          "mappedType": "json"
         },
         "education": {
           "name": "education",
@@ -211,23 +262,6 @@
           "collation": null,
           "enumItems": [],
           "mappedType": "string"
-        },
-        "summary": {
-          "name": "summary",
-          "type": "jsonb",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": true,
-          "unique": false,
-          "length": null,
-          "precision": null,
-          "scale": null,
-          "default": null,
-          "comment": null,
-          "collation": null,
-          "enumItems": [],
-          "mappedType": "json"
         },
         "target_role": {
           "name": "target_role",

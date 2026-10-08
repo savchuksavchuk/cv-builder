@@ -8,7 +8,8 @@ export const GENERATION_STEPS: CvStep[] = [
   CvStep.VerifyEvidence,
   CvStep.GenerateQuestions,
   CvStep.AnswerQuestions,
-  CvStep.TailorToRole,
+  CvStep.ComposeCv,
+  CvStep.ValidateResult,
 ];
 
 export const NEXT_STEP: Partial<Record<CvStep, CvStep>> = {
@@ -16,10 +17,13 @@ export const NEXT_STEP: Partial<Record<CvStep, CvStep>> = {
   [CvStep.ExtractFacts]: CvStep.VerifyEvidence,
   [CvStep.ApplyAnswers]: CvStep.VerifyEvidence,
   [CvStep.VerifyEvidence]: CvStep.GenerateQuestions,
+  [CvStep.ComposeCv]: CvStep.ValidateResult,
 };
 
 export const STEP_MODELS: Partial<Record<CvStep, LlmModel>> = {
   [CvStep.ExtractFacts]: LlmModel.Sonnet,
   [CvStep.GenerateQuestions]: LlmModel.Sonnet,
   [CvStep.ApplyAnswers]: LlmModel.Sonnet,
+  [CvStep.ComposeCv]: LlmModel.Sonnet,
+  [CvStep.ValidateResult]: LlmModel.Sonnet,
 };

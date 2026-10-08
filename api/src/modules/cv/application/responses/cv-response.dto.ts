@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Expose, Type, plainToInstance } from 'class-transformer';
+import { Expose, Transform, Type, plainToInstance } from 'class-transformer';
 import { CvSnapshot } from '../../domain/entities/cv.entity';
+import { CvDocument } from '../../domain/types/cv-document';
 import { CvStatus } from '../../domain/types/cv-status';
 import { CvStep } from '../../domain/types/cv-step';
 import { QuestionStatus } from '../../domain/types/question';
@@ -47,6 +48,15 @@ export class CvResponseDTO {
   @Expose()
   @Type(() => QuestionResponseDTO)
   questions: QuestionResponseDTO[];
+
+  @ApiProperty({
+    type: 'object',
+    nullable: true,
+    additionalProperties: true,
+    description: 'Generated CV content; null until generation completes',
+  })
+  @Expose()
+  document: CvDocument | null;
 
   @ApiProperty()
   @Expose()

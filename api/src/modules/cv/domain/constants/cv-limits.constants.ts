@@ -3,3 +3,5 @@ export const MAX_TARGET_ROLE_CHARS = 120;
 export const MAX_QUESTION_ROUNDS = 2;
 export const MAX_QUESTIONS_PER_ROUND = 5;
 export const MAX_ANSWER_CHARS = 2_000;
+export const MAX_COMPOSE_REGENERATIONS = 3;
+export const MAX_BULLET_CHARS = 400;
