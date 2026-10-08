@@ -6,12 +6,16 @@ import {
   Param,
   ParseUUIDPipe,
   Post,
+  Query,
   UploadedFile,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiBody, ApiConsumes, ApiSecurity, ApiTags } from '@nestjs/swagger';
+import { PaginationQueryDto } from '../../../../common/dto/pagination-query.dto';
+import { CvListResponseDTO } from '../../application/responses/cv-list-response.dto';
+import { ListCvsUseCase } from '../../application/use-cases/list-cvs.use-case';
 import { CurrentUser } from '../../../../common/decorators/current-user.decorator';
 import { AuthGuard } from '../../../../common/guards/auth.guard';
 import { PdfFilePipe } from '../../../../common/pipes/pdf-file.pipe';
@@ -35,6 +39,7 @@ export class CvController {
   constructor(
     private readonly initCv: InitCvUseCase,
     private readonly getCv: GetCvUseCase,
+    private readonly listCvs: ListCvsUseCase,
     private readonly submitAnswers: SubmitAnswersUseCase,
   ) {}
 
@@ -60,6 +65,14 @@ export class CvController {
     @UploadedFile(new PdfFilePipe()) file?: Express.Multer.File,
   ) {
     return this.initCv.execute(user.sub, dto, file);
+  }
+
+  @Get()
+  async list(
+    @CurrentUser() user: UserPayload,
+    @Query() query: PaginationQueryDto,
+  ): Promise<CvListResponseDTO> {
+    return this.listCvs.execute(user.sub, query);
   }
 
   @Get(':id')

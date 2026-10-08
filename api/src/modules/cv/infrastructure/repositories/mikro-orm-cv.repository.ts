@@ -1,6 +1,7 @@
 import { LockMode } from '@mikro-orm/core';
 import { EntityManager } from '@mikro-orm/postgresql';
 import { Injectable } from '@nestjs/common';
+import { Page } from '../../../../common/types/page.type';
 import { SaveOptions } from '../../../../common/types/save-options.type';
 import { Cv } from '../../domain/entities/cv.entity';
 import { CvRepository } from '../../domain/repositories/cv.repository';
@@ -20,13 +21,17 @@ export class MikroOrmCvRepository implements CvRepository {
     return model ? cvSchema.toDomain(model) : null;
   }
 
-  async listForUser(userId: string): Promise<Cv[]> {
-    const models = await this.em.find(
+  // ponytail: loads full rows incl. document JSON, narrow `fields` if the list gets slow
+  async listForUser(
+    userId: string,
+    { offset, limit }: { offset: number; limit: number },
+  ): Promise<Page<Cv>> {
+    const [models, total] = await this.em.findAndCount(
       cvSchema,
       { userId },
-      { orderBy: { updatedAt: 'desc' } },
+      { orderBy: { updatedAt: 'desc', id: 'desc' }, offset, limit },
     );
-    return models.map((m) => cvSchema.toDomain(m));
+    return { items: models.map((m) => cvSchema.toDomain(m)), total };
   }
 
   async save(cv: Cv, options: SaveOptions = {}): Promise<void> {

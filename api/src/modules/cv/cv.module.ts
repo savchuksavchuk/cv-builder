@@ -14,6 +14,7 @@ import { VerifyEvidenceUseCase } from './application/use-cases/verify-evidence.u
 import { ApplyAnswersUseCase } from './application/use-cases/apply-answers.use-case';
 import { SubmitAnswersUseCase } from './application/use-cases/submit-answers.use-case';
 import { GetCvUseCase } from './application/use-cases/get-cv.use-case';
+import { ListCvsUseCase } from './application/use-cases/list-cvs.use-case';
 import { InitCvUseCase } from './application/use-cases/init-cv.use-case';
 import { CV_REPOSITORY } from './domain/repositories/cv.repository';
 import { ApplyAnswersWorker } from './infrastructure/workers/apply-answers.worker';
@@ -36,6 +37,7 @@ import { CvController } from './interfaces/controllers/cv.controller';
   providers: [
     InitCvUseCase,
     GetCvUseCase,
+    ListCvsUseCase,
     ComposeCvUseCase,
     ValidateResultUseCase,
     ExtractFactsUseCase,
