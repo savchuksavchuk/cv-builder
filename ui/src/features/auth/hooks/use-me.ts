@@ -1,10 +1,10 @@
 import { useQuery } from '@tanstack/react-query'
-import { getMe, ME_QUERY_KEY } from '@/entities/user'
+import { ME_QUERY_KEY, UserApi } from '@/entities/user'
 
 export const useMe = () => {
   const { data, isPending, isError } = useQuery({
     queryKey: [ME_QUERY_KEY],
-    queryFn: getMe,
+    queryFn: () => UserApi.getMe(),
     retry: false,
   })
 

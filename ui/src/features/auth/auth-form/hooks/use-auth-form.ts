@@ -2,7 +2,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router'
-import { signIn, signUp } from '@/entities/auth'
+import { AuthApi } from '@/entities/auth'
 import { ME_QUERY_KEY } from '@/entities/user'
 import { ApiError } from '@/shared/api/api-error'
 import {
@@ -35,9 +35,9 @@ export const useAuthForm = (mode: AuthMode) => {
   const { mutate, isPending, error } = useMutation({
     mutationFn: async (data: CredentialsFormData) => {
       if (mode === 'sign-up') {
-        await signUp(data)
+        await AuthApi.signUp(data)
       }
-      await signIn(data)
+      await AuthApi.signIn(data)
     },
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: [ME_QUERY_KEY] })
