@@ -35,7 +35,7 @@ export const getWizardStep = ({
     return WizardStep.Edit
   }
 
-  if (status === CvStatus.Failed || !currentStep) {
+  if (!currentStep) {
     return null
   }
 

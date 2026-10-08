@@ -1,4 +1,4 @@
-import { Loader2 } from 'lucide-react'
+import { CircleAlert, Loader2 } from 'lucide-react'
 import { Link } from 'react-router'
 import { CvStatus, STEP_LABELS, type Cv } from '@/entities/cv'
 import { ApiError } from '@/shared/api/api-error'
@@ -34,25 +34,51 @@ export const CvWizard = ({ id }: { id: string }) => {
   }
 
   const step = getWizardStep(cv)
+  const failed = cv.status === CvStatus.Failed
 
-  if (!step) {
-    return (
-      <Message text={cv.failureReason ?? 'Generation failed'}>
-        <Button asChild>
-          <Link to="/cvs/new">Create a new CV</Link>
-        </Button>
-      </Message>
-    )
+  if (!step && !failed) {
+    return <Message text="Something went wrong" />
   }
 
   return (
     <div className="flex flex-col gap-6">
       <h1 className="truncate text-xl font-semibold">{cv.targetRole}</h1>
-      <CvStepper current={step} />
-      <Panel cv={cv} step={step} />
+      {step && <CvStepper current={step} failed={failed} />}
+      {failed ? (
+        <FailureNotice cv={cv} />
+      ) : (
+        step && <Panel cv={cv} step={step} />
+      )}
     </div>
   )
 }
+
+const FailureNotice = ({ cv }: { cv: Cv }) => (
+  <div className="border-destructive/50 bg-destructive/5 flex flex-col gap-4 rounded-lg border p-4">
+    <div className="flex gap-3">
+      <CircleAlert className="text-destructive mt-0.5 size-5 shrink-0" />
+      <div className="flex min-w-0 flex-col gap-1">
+        <p className="font-medium">Generation failed</p>
+        {cv.currentStep && (
+          <p className="text-muted-foreground text-sm">
+            Failed at: {STEP_LABELS[cv.currentStep]}
+          </p>
+        )}
+        {cv.failureReason && (
+          <p className="text-sm break-words">{cv.failureReason}</p>
+        )}
+      </div>
+    </div>
+    <div className="flex flex-col gap-2 sm:flex-row">
+      <Button asChild>
+        <Link to="/cvs/new">Create a new CV</Link>
+      </Button>
+      <Button asChild variant="outline">
+        <Link to="/">Back to my CVs</Link>
+      </Button>
+    </div>
+  </div>
+)
 
 const Message = ({
   text,
