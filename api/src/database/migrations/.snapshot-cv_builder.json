@@ -1,30 +1,11 @@
 {
   "name": "public",
-  "namespaces": [
-    "public"
-  ],
+  "namespaces": ["public"],
   "tables": [
     {
       "name": "cvs",
       "schema": "public",
       "columns": {
-        "certifications": {
-          "name": "certifications",
-          "type": "jsonb",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
-          "unique": false,
-          "length": null,
-          "precision": null,
-          "scale": null,
-          "default": null,
-          "comment": null,
-          "collation": null,
-          "enumItems": [],
-          "mappedType": "json"
-        },
         "compose_feedback": {
           "name": "compose_feedback",
           "type": "jsonb",
@@ -58,23 +39,6 @@
           "collation": null,
           "enumItems": [],
           "mappedType": "integer"
-        },
-        "contacts": {
-          "name": "contacts",
-          "type": "jsonb",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": true,
-          "unique": false,
-          "length": null,
-          "precision": null,
-          "scale": null,
-          "default": null,
-          "comment": null,
-          "collation": null,
-          "enumItems": [],
-          "mappedType": "json"
         },
         "created_at": {
           "name": "created_at",
@@ -127,8 +91,8 @@
           "enumItems": [],
           "mappedType": "json"
         },
-        "education": {
-          "name": "education",
+        "facts": {
+          "name": "facts",
           "type": "jsonb",
           "unsigned": false,
           "autoincrement": false,
@@ -138,7 +102,7 @@
           "length": null,
           "precision": null,
           "scale": null,
-          "default": null,
+          "default": "'[]'",
           "comment": null,
           "collation": null,
           "enumItems": [],
@@ -330,30 +294,11 @@
           "collation": null,
           "enumItems": [],
           "mappedType": "integer"
-        },
-        "work_experience": {
-          "name": "work_experience",
-          "type": "jsonb",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
-          "unique": false,
-          "length": null,
-          "precision": null,
-          "scale": null,
-          "default": null,
-          "comment": null,
-          "collation": null,
-          "enumItems": [],
-          "mappedType": "json"
         }
       },
       "indexes": [
         {
-          "columnNames": [
-            "id"
-          ],
+          "columnNames": ["id"],
           "composite": false,
           "constraint": true,
           "keyName": "cvs_pkey",
@@ -361,9 +306,7 @@
           "unique": true
         },
         {
-          "columnNames": [
-            "user_id"
-          ],
+          "columnNames": ["user_id"],
           "composite": false,
           "constraint": false,
           "keyName": "cvs_user_id_index",
@@ -375,14 +318,10 @@
       "triggers": [],
       "foreignKeys": {
         "cvs_user_id_foreign": {
-          "columnNames": [
-            "user_id"
-          ],
+          "columnNames": ["user_id"],
           "constraintName": "cvs_user_id_foreign",
           "localTableName": "public.cvs",
-          "referencedColumnNames": [
-            "id"
-          ],
+          "referencedColumnNames": ["id"],
           "referencedTableName": "public.users",
           "deleteRule": "cascade"
         }
@@ -464,9 +403,7 @@
       },
       "indexes": [
         {
-          "columnNames": [
-            "email"
-          ],
+          "columnNames": ["email"],
           "composite": false,
           "constraint": true,
           "keyName": "users_email_unique",
@@ -474,9 +411,7 @@
           "unique": true
         },
         {
-          "columnNames": [
-            "id"
-          ],
+          "columnNames": ["id"],
           "composite": false,
           "constraint": true,
           "keyName": "users_pkey",

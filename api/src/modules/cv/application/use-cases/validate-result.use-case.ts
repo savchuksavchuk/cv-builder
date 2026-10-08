@@ -11,7 +11,7 @@ import { CV_REPOSITORY } from '../../domain/repositories/cv.repository';
 import type { CvRepository } from '../../domain/repositories/cv.repository';
 import { CvStatus } from '../../domain/types/cv-status';
 import { CvStep } from '../../domain/types/cv-step';
-import { sourceValues } from '../../domain/utils/build-document';
+import { sourceValues } from '../../domain/utils/facts';
 import {
   Verdict,
   reviewDocument,
@@ -41,12 +41,7 @@ export class ValidateResultUseCase {
       throw new Error('CV has no document to validate');
     }
 
-    const values = sourceValues({
-      contacts: cv.contacts,
-      workExperience: cv.workExperience,
-      education: cv.education,
-      certifications: cv.certifications,
-    });
+    const values = sourceValues(cv.facts);
 
     const verdict = await this.judge(document, values);
 

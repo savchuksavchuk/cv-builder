@@ -1,7 +1,8 @@
 import { randomUUID } from 'node:crypto';
 import { MAX_BULLET_CHARS } from '../constants/cv-limits.constants';
 import { CvBullet, CvDocument } from '../types/cv-document';
-import { VerifiableSections } from './verify-evidence';
+import { Fact, FactField as F, FactSection } from '../types/fact';
+import { Entry, all, entries, first } from './facts';
 
 export type Composition = {
   summary: string;
@@ -10,87 +11,58 @@ export type Composition = {
   bullets: { jobId: string; text: string; sourceIds: string[] }[];
 };
 
-export function sourceValues(
-  sections: VerifiableSections,
-): Map<string, string> {
-  const values = new Map<string, string>();
-
-  for (const job of sections.workExperience) {
-    for (const item of [
-      ...job.responsibilities,
-      ...job.achievements,
-      ...job.skills,
-    ]) {
-      if (item.value) {
-        values.set(item.id, item.value);
-      }
-    }
-  }
-
-  return values;
-}
-
-type Job = VerifiableSections['workExperience'][number];
-
 export function buildDocument(
-  sections: VerifiableSections,
+  facts: Fact[],
   composition: Composition,
 ): CvDocument {
+  const contacts = entries(facts, FactSection.Contacts)[0];
+  const jobs = entries(facts, FactSection.WorkExperience);
+
   return {
-    header: buildHeader(sections.contacts),
+    header: {
+      fullName: first(contacts, F.FullName),
+      email: first(contacts, F.Email),
+      phone: first(contacts, F.Phone),
+      location: first(contacts, F.Location),
+      links: all(contacts, F.Link).map((link) => link.value),
+    },
     summary: composition.summary.trim() || null,
-    skills: buildSkills(sections.workExperience, composition.skillIds),
-    experience: buildExperience(sections.workExperience, composition),
-    education: sections.education.map((item) => ({
-      id: item.id,
-      institution: item.institution.value,
-      degree: item.degree.value,
-      fieldOfStudy: item.fieldOfStudy.value,
-      startDate: item.startDate.value,
-      endDate: item.endDate.value,
+    skills: buildSkills(facts, composition.skillIds),
+    experience: sortByOrder(jobs, composition.jobOrder).map((job) => ({
+      id: job.id,
+      company: first(job, F.Company),
+      title: first(job, F.Title),
+      location: first(job, F.Location),
+      startDate: first(job, F.StartDate),
+      endDate: first(job, F.EndDate),
+      bullets: buildBullets(job, composition.bullets),
     })),
-    certifications: sections.certifications.map((item) => ({
+    education: entries(facts, FactSection.Education).map((item) => ({
       id: item.id,
-      name: item.name.value,
-      issuer: item.issuer.value,
-      issueDate: item.issueDate.value,
+      institution: first(item, F.Institution),
+      degree: first(item, F.Degree),
+      fieldOfStudy: first(item, F.FieldOfStudy),
+      startDate: first(item, F.StartDate),
+      endDate: first(item, F.EndDate),
+    })),
+    certifications: entries(facts, FactSection.Certification).map((item) => ({
+      id: item.id,
+      name: first(item, F.Name),
+      issuer: first(item, F.Issuer),
+      issueDate: first(item, F.IssueDate),
     })),
   };
 }
 
-function buildHeader(contacts: VerifiableSections['contacts']) {
-  return {
-    fullName: contacts?.fullName.value ?? null,
-    email: contacts?.email.value ?? null,
-    phone: contacts?.phone.value ?? null,
-    location: contacts?.location.value ?? null,
-    links: (contacts?.links ?? [])
-      .map((link) => link.value)
-      .filter((value): value is string => !!value),
-  };
-}
-
-function buildSkills(jobs: Job[], skillIds: string[]): string[] {
+function buildSkills(facts: Fact[], skillIds: string[]): string[] {
   const skills = new Map(
-    jobs.flatMap((job) => job.skills.map((skill) => [skill.id, skill.value])),
+    facts.filter((f) => f.field === F.Skill).map((f) => [f.id, f.value]),
   );
   const values = skillIds
     .map((id) => skills.get(id))
     .filter((value): value is string => !!value);
 
   return [...new Set(values)];
-}
-
-function buildExperience(jobs: Job[], composition: Composition) {
-  return sortByOrder(jobs, composition.jobOrder).map((job) => ({
-    id: job.id,
-    company: job.company.value,
-    title: job.title.value,
-    location: job.location.value,
-    startDate: job.startDate.value,
-    endDate: job.endDate.value,
-    bullets: buildBullets(job, composition.bullets),
-  }));
 }
 
 function sortByOrder<T extends { id: string }>(
@@ -104,13 +76,11 @@ function sortByOrder<T extends { id: string }>(
   return [...new Set([...listed, ...items])];
 }
 
-function factsOf(job: Job) {
-  return [...job.responsibilities, ...job.achievements].filter(
-    (item) => item.value,
-  );
+function factsOf(job: Entry): Fact[] {
+  return [...all(job, F.Responsibility), ...all(job, F.Achievement)];
 }
 
-function buildBullets(job: Job, drafts: Composition['bullets']): CvBullet[] {
+function buildBullets(job: Entry, drafts: Composition['bullets']): CvBullet[] {
   const ownIds = new Set(factsOf(job).map((fact) => fact.id));
 
   const bullets = drafts
@@ -130,10 +100,10 @@ function buildBullets(job: Job, drafts: Composition['bullets']): CvBullet[] {
   return bullets.length ? bullets : bulletsFromFacts(job);
 }
 
-function bulletsFromFacts(job: Job): CvBullet[] {
+function bulletsFromFacts(job: Entry): CvBullet[] {
   return factsOf(job).map((fact) => ({
     id: randomUUID(),
-    text: fact.value!,
+    text: fact.value,
     sourceIds: [fact.id],
   }));
 }

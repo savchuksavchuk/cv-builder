@@ -14,7 +14,8 @@ import { CV_REPOSITORY } from '../../domain/repositories/cv.repository';
 import type { CvRepository } from '../../domain/repositories/cv.repository';
 import { CvStatus } from '../../domain/types/cv-status';
 import { CvStep } from '../../domain/types/cv-step';
-import { QuestionDraft, allowedPaths } from '../../domain/utils/question-paths';
+import { QuestionDraft } from '../../domain/types/question';
+import { askableTargets } from '../../domain/utils/facts';
 import { generatedQuestionsOutput } from '../llm/generate-questions.output';
 import {
   GENERATE_QUESTIONS_SYSTEM,
@@ -62,15 +63,14 @@ export class GenerateQuestionsUseCase {
   }
 
   private async draftQuestions(cv: Cv): Promise<QuestionDraft[]> {
-    const paths = allowedPaths(cv);
-    const asked = new Set(cv.questions.map((q) => q.path));
+    const targets = askableTargets(cv.facts, cv.questions);
 
     const generated = await this.llm.generateObject({
       model: STEP_MODELS[CvStep.GenerateQuestions]!,
       effort: STEP_EFFORT[CvStep.GenerateQuestions],
       schema: generatedQuestionsOutput,
       system: GENERATE_QUESTIONS_SYSTEM,
-      prompt: buildGenerateQuestionsPrompt(cv, paths),
+      prompt: buildGenerateQuestionsPrompt(cv, [...targets.keys()]),
     });
 
     if (!generated.success || !generated.dto) {
@@ -78,10 +78,17 @@ export class GenerateQuestionsUseCase {
     }
 
     return generated.dto.questions
-      .map(({ path, question }) => ({ path, question: question.trim() }))
-      .filter(
-        ({ path, question }) => paths.has(path) && !asked.has(path) && question,
-      )
+      .flatMap(({ path, question }) => {
+        const target = targets.get(path);
+        const text = question.trim();
+
+        if (!target || !text) {
+          return [];
+        }
+        targets.delete(path);
+
+        return [{ target, question: text }];
+      })
       .slice(0, MAX_QUESTIONS_PER_ROUND);
   }
 }

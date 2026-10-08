@@ -10,11 +10,9 @@ import { CV_REPOSITORY } from '../../domain/repositories/cv.repository';
 import type { CvRepository } from '../../domain/repositories/cv.repository';
 import { CvStatus } from '../../domain/types/cv-status';
 import { CvStep } from '../../domain/types/cv-step';
-import {
-  answeredQuestions,
-  applyAnswersOutput,
-  toAnswerSections,
-} from '../llm/apply-answers.output';
+import { Question, QuestionStatus } from '../../domain/types/question';
+import { mergeAnswerFacts } from '../../domain/utils/facts';
+import { applyAnswersOutput } from '../llm/apply-answers.output';
 import {
   APPLY_ANSWERS_SYSTEM,
   buildApplyAnswersPrompt,
@@ -32,21 +30,14 @@ export class ApplyAnswersUseCase {
   ) {}
 
   async execute(cv: Cv): Promise<void> {
-    const answered = answeredQuestions(cv.questions);
+    const answered = cv.questions.filter(
+      (q) => q.status === QuestionStatus.Answered,
+    );
 
     const facts = answered.length ? await this.extractFacts(answered) : [];
 
     const applied = cv.applyAnswers(
-      toAnswerSections(
-        {
-          contacts: cv.contacts,
-          workExperience: cv.workExperience,
-          education: cv.education,
-          certifications: cv.certifications,
-        },
-        answered,
-        facts,
-      ),
+      mergeAnswerFacts(cv.facts, answered, facts),
     );
 
     if (!applied.success) {
@@ -71,7 +62,7 @@ export class ApplyAnswersUseCase {
     });
   }
 
-  private async extractFacts(questions: ReturnType<typeof answeredQuestions>) {
+  private async extractFacts(questions: Question[]) {
     const generated = await this.llm.generateObject({
       model: STEP_MODELS[CvStep.ApplyAnswers]!,
       effort: STEP_EFFORT[CvStep.ApplyAnswers],

@@ -1,22 +1,83 @@
 export const INITIAL_USER_INPUT_SOURCE = 'initial_user_input';
+export const CONTACTS_ENTRY = 'contacts';
 
-export enum FactOrigin {
-  Ai = 'ai',
-  User = 'user',
+export enum FactSection {
+  Contacts = 'contacts',
+  WorkExperience = 'work_experience',
+  Education = 'education',
+  Certification = 'certification',
 }
+
+export enum FactField {
+  FullName = 'full_name',
+  Email = 'email',
+  Phone = 'phone',
+  Location = 'location',
+  Link = 'link',
+  Company = 'company',
+  Title = 'title',
+  StartDate = 'start_date',
+  EndDate = 'end_date',
+  Responsibility = 'responsibility',
+  Achievement = 'achievement',
+  Skill = 'skill',
+  Institution = 'institution',
+  Degree = 'degree',
+  FieldOfStudy = 'field_of_study',
+  Name = 'name',
+  Issuer = 'issuer',
+  IssueDate = 'issue_date',
+}
+
+export const SECTION_FIELDS: Record<FactSection, FactField[]> = {
+  [FactSection.Contacts]: [
+    FactField.FullName,
+    FactField.Email,
+    FactField.Phone,
+    FactField.Location,
+    FactField.Link,
+  ],
+  [FactSection.WorkExperience]: [
+    FactField.Company,
+    FactField.Title,
+    FactField.Location,
+    FactField.StartDate,
+    FactField.EndDate,
+    FactField.Responsibility,
+    FactField.Achievement,
+    FactField.Skill,
+  ],
+  [FactSection.Education]: [
+    FactField.Institution,
+    FactField.Degree,
+    FactField.FieldOfStudy,
+    FactField.StartDate,
+    FactField.EndDate,
+  ],
+  [FactSection.Certification]: [
+    FactField.Name,
+    FactField.Issuer,
+    FactField.IssueDate,
+  ],
+};
+
+export const LIST_FIELDS: ReadonlySet<FactField> = new Set([
+  FactField.Link,
+  FactField.Responsibility,
+  FactField.Achievement,
+  FactField.Skill,
+]);
 
 export type Evidence = {
   source: string;
   quote: string;
 };
 
-export type Fact<T = string> = {
-  value: T | null;
-  evidence: Evidence | null;
-  origin: FactOrigin;
+export type Fact = {
+  id: string;
+  section: FactSection;
+  entryId: string;
+  field: FactField;
+  value: string;
+  evidence: Evidence;
 };
-
-export type Item<T> = T & { id: string };
-
-export type YearMonth = string;
-export type EndDate = YearMonth | 'present';

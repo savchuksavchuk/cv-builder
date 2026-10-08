@@ -9,18 +9,13 @@ import {
   GENERATION_STEPS,
   NEXT_STEP,
 } from '../constants/cv-pipeline.constants';
-import { QuestionDraft } from '../utils/question-paths';
 import { normalizeText } from '../utils/normalize-text';
-import { VerifiableSections, verifySections } from '../utils/verify-evidence';
+import { verifyFacts } from '../utils/facts';
 import { CvDocument, CvDocumentPatch } from '../types/cv-document';
-import { Certification } from '../types/certification';
-import { Contacts } from '../types/contacts';
 import { CvStatus } from '../types/cv-status';
 import { CvStep } from '../types/cv-step';
-import { Education } from '../types/education';
-import { INITIAL_USER_INPUT_SOURCE } from '../types/fact';
-import { Question, QuestionStatus } from '../types/question';
-import { WorkExperience } from '../types/work-experience';
+import { Fact, INITIAL_USER_INPUT_SOURCE } from '../types/fact';
+import { Question, QuestionDraft, QuestionStatus } from '../types/question';
 
 export type CvSnapshot = Readonly<{
   id: string;
@@ -31,11 +26,8 @@ export type CvSnapshot = Readonly<{
   failureReason: string | null;
   initialUserInput: string;
   sourceFileKey: string | null;
-  contacts: Contacts | null;
   document: CvDocument | null;
-  workExperience: WorkExperience[];
-  education: Education[];
-  certifications: Certification[];
+  facts: Fact[];
   questions: Question[];
   questionRounds: number;
   composeRegenerations: number;
@@ -54,11 +46,8 @@ export class Cv {
   failureReason: string | null;
   initialUserInput: string;
   sourceFileKey: string | null;
-  contacts: Contacts | null;
   document: CvDocument | null;
-  workExperience: WorkExperience[];
-  education: Education[];
-  certifications: Certification[];
+  facts: Fact[];
   questions: Question[];
   questionRounds: number;
   composeRegenerations: number;
@@ -83,11 +72,8 @@ export class Cv {
     cv.failureReason = null;
     cv.initialUserInput = normalizeText(rawText);
     cv.sourceFileKey = sourceFileKey;
-    cv.contacts = null;
     cv.document = null;
-    cv.workExperience = [];
-    cv.education = [];
-    cv.certifications = [];
+    cv.facts = [];
     cv.questions = [];
     cv.questionRounds = 0;
     cv.composeRegenerations = 0;
@@ -181,12 +167,7 @@ export class Cv {
     return builder.setSuccess(true).build();
   }
 
-  applyExtractedFacts(sections: {
-    contacts: Contacts;
-    workExperience: WorkExperience[];
-    education: Education[];
-    certifications: Certification[];
-  }): Result {
+  applyExtractedFacts(facts: Fact[]): Result {
     const builder = new ResultBuilder();
 
     if (
@@ -199,10 +180,7 @@ export class Cv {
         .build();
     }
 
-    this.contacts = sections.contacts;
-    this.workExperience = sections.workExperience;
-    this.education = sections.education;
-    this.certifications = sections.certifications;
+    this.facts = facts;
     this.touch();
 
     return builder.setSuccess(true).build();
@@ -221,23 +199,11 @@ export class Cv {
         .build();
     }
 
-    const verified = verifySections(
-      {
-        contacts: this.contacts,
-        workExperience: this.workExperience,
-        education: this.education,
-        certifications: this.certifications,
-      },
-      (source) =>
-        source === INITIAL_USER_INPUT_SOURCE
-          ? this.initialUserInput
-          : (this.questions.find((q) => q.id === source)?.answer ?? null),
+    this.facts = verifyFacts(this.facts, (source) =>
+      source === INITIAL_USER_INPUT_SOURCE
+        ? this.initialUserInput
+        : (this.questions.find((q) => q.id === source)?.answer ?? null),
     );
-
-    this.contacts = verified.contacts;
-    this.workExperience = verified.workExperience;
-    this.education = verified.education;
-    this.certifications = verified.certifications;
     this.touch();
 
     return builder.setSuccess(true).build();
@@ -264,7 +230,7 @@ export class Cv {
       this.questions.push(
         ...drafts.map((draft) => ({
           id: randomUUID(),
-          path: draft.path,
+          target: draft.target,
           question: draft.question,
           status: QuestionStatus.Open,
           answer: null,
@@ -327,7 +293,7 @@ export class Cv {
     return builder.setSuccess(true).build();
   }
 
-  applyAnswers(sections: VerifiableSections): Result {
+  applyAnswers(facts: Fact[]): Result {
     const builder = new ResultBuilder();
 
     if (
@@ -340,10 +306,7 @@ export class Cv {
         .build();
     }
 
-    this.contacts = sections.contacts;
-    this.workExperience = sections.workExperience;
-    this.education = sections.education;
-    this.certifications = sections.certifications;
+    this.facts = facts;
 
     const now = new Date().toISOString();
     for (const question of this.questions) {
@@ -563,11 +526,8 @@ export class Cv {
       failureReason: this.failureReason,
       initialUserInput: this.initialUserInput,
       sourceFileKey: this.sourceFileKey,
-      contacts: this.contacts,
       document: this.document,
-      workExperience: this.workExperience,
-      education: this.education,
-      certifications: this.certifications,
+      facts: this.facts,
       questions: this.questions,
       questionRounds: this.questionRounds,
       composeRegenerations: this.composeRegenerations,

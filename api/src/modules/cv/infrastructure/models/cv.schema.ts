@@ -2,13 +2,10 @@ import { EntitySchema } from '@mikro-orm/core';
 import { MAX_TARGET_ROLE_CHARS } from '../../domain/constants/cv-limits.constants';
 import { Cv } from '../../domain/entities/cv.entity';
 import { CvDocument } from '../../domain/types/cv-document';
-import { Certification } from '../../domain/types/certification';
-import { Contacts } from '../../domain/types/contacts';
 import { CvStatus } from '../../domain/types/cv-status';
 import { CvStep } from '../../domain/types/cv-step';
-import { Education } from '../../domain/types/education';
+import { Fact } from '../../domain/types/fact';
 import { Question } from '../../domain/types/question';
-import { WorkExperience } from '../../domain/types/work-experience';
 
 export interface CvModel {
   id: string;
@@ -19,11 +16,8 @@ export interface CvModel {
   failureReason: string | null;
   initialUserInput: string;
   sourceFileKey: string | null;
-  contacts: Contacts | null;
   document: CvDocument | null;
-  workExperience: WorkExperience[];
-  education: Education[];
-  certifications: Certification[];
+  facts: Fact[];
   questions: Question[];
   questionRounds: number;
   composeRegenerations: number;
@@ -54,11 +48,8 @@ export class CvSchema extends EntitySchema<CvModel> {
         failureReason: { type: 'text', nullable: true },
         initialUserInput: { type: 'text' },
         sourceFileKey: { type: 'string', nullable: true },
-        contacts: { type: 'json', nullable: true },
         document: { type: 'json', nullable: true },
-        workExperience: { type: 'json' },
-        education: { type: 'json' },
-        certifications: { type: 'json' },
+        facts: { type: 'json', defaultRaw: "'[]'" },
         questions: { type: 'json' },
         questionRounds: { type: 'number', default: 0 },
         composeRegenerations: { type: 'number', default: 0 },
@@ -84,11 +75,8 @@ export class CvSchema extends EntitySchema<CvModel> {
     cv.failureReason = model.failureReason;
     cv.initialUserInput = model.initialUserInput;
     cv.sourceFileKey = model.sourceFileKey;
-    cv.contacts = model.contacts;
     cv.document = model.document;
-    cv.workExperience = model.workExperience;
-    cv.education = model.education;
-    cv.certifications = model.certifications;
+    cv.facts = model.facts;
     cv.questions = model.questions;
     cv.questionRounds = model.questionRounds;
     cv.composeRegenerations = model.composeRegenerations;

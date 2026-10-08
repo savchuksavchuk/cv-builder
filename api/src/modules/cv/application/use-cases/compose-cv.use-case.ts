@@ -29,26 +29,19 @@ export class ComposeCvUseCase {
   ) {}
 
   async execute(cv: Cv): Promise<void> {
-    const sections = {
-      contacts: cv.contacts,
-      workExperience: cv.workExperience,
-      education: cv.education,
-      certifications: cv.certifications,
-    };
-
     const generated = await this.llm.generateObject({
       model: STEP_MODELS[CvStep.ComposeCv]!,
       effort: STEP_EFFORT[CvStep.ComposeCv],
       schema: composeCvOutput,
       system: COMPOSE_CV_SYSTEM,
-      prompt: buildComposeCvPrompt(cv, sections),
+      prompt: buildComposeCvPrompt(cv),
     });
 
     if (!generated.success || !generated.dto) {
       throw new Error(generated.message);
     }
 
-    const applied = cv.applyComposition(buildDocument(sections, generated.dto));
+    const applied = cv.applyComposition(buildDocument(cv.facts, generated.dto));
     if (!applied.success) {
       throw new Error(applied.message);
     }
