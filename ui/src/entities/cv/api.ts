@@ -26,4 +26,15 @@ export class CvApi {
     const { data } = await $api.patch<Cv>(`/cvs/${id}`, body)
     return data
   }
+
+  static async downloadPdf(id: string) {
+    const { data, headers } = await $api.get<Blob>(`/cvs/${id}/pdf`, {
+      responseType: 'blob',
+    })
+    const fileName =
+      /filename="([^"]+)"/.exec(headers['content-disposition'] ?? '')?.[1] ??
+      'cv.pdf'
+
+    return { blob: data, fileName }
+  }
 }

@@ -16,6 +16,7 @@ export const SecurityAdapter = (
     origin: getAllowedOrigins(configService),
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
+    exposedHeaders: ['Content-Disposition'],
   });
 
   app.use(helmet());

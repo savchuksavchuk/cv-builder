@@ -2,11 +2,13 @@ import { useState } from 'react'
 import type { Cv } from '@/entities/cv'
 import { CvEditor } from '@/features/cv-editor'
 import { Button } from '@/shared/ui/button'
+import { useDownloadCvPdf } from '../hooks/use-download-cv-pdf'
 import { useUpdateCv } from '../hooks/use-update-cv'
 import { CvPreview } from './cv-preview'
 
 export const CvResult = ({ cv }: { cv: Cv }) => {
   const [editing, setEditing] = useState(false)
+  const { download, isDownloading } = useDownloadCvPdf(cv.id)
   const { update, isPending, error, reset } = useUpdateCv(cv)
 
   if (!cv.document) {
@@ -36,9 +38,12 @@ export const CvResult = ({ cv }: { cv: Cv }) => {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex justify-end">
+      <div className="flex justify-end gap-2">
         <Button variant="outline" onClick={() => setEditing(true)}>
           Edit
+        </Button>
+        <Button disabled={isDownloading} onClick={() => download()}>
+          Download PDF
         </Button>
       </div>
       <CvPreview document={cv.document} />

@@ -6,7 +6,6 @@ export enum WizardStep {
   Questions = 'questions',
   Generation = 'generation',
   Edit = 'edit',
-  Download = 'download',
 }
 
 export const WIZARD_STEPS = [
@@ -15,7 +14,6 @@ export const WIZARD_STEPS = [
   { id: WizardStep.Questions, label: 'Questions' },
   { id: WizardStep.Generation, label: 'Generation' },
   { id: WizardStep.Edit, label: 'Edit' },
-  { id: WizardStep.Download, label: 'Download' },
 ]
 
 const STEP_TO_WIZARD: Record<CvStep, WizardStep> = {
