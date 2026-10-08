@@ -51,7 +51,9 @@ export class PuppeteerPdfRendererPortImplementation
   }
 
   private getBrowser(): Promise<Browser> {
-    this.browser ??= puppeteer.launch().then((browser) => {
+    const args =
+      process.env.PUPPETEER_NO_SANDBOX === 'true' ? ['--no-sandbox'] : [];
+    this.browser ??= puppeteer.launch({ args }).then((browser) => {
       browser.once('disconnected', () => {
         this.browser = undefined;
       });

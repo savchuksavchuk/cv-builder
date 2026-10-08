@@ -15,5 +15,34 @@ services:
       timeout: 3s
       retries: 10
 
+  api:
+    build:
+      context: .
+      dockerfile: api/Dockerfile
+    environment:
+      PORT: 3777
+      CLIENT_DOMAIN: http://localhost:3000
+      DATABASE_URL: postgresql://cv:cv@postgres:5432/cv_builder
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:?pass ANTHROPIC_API_KEY, e.g. ANTHROPIC_API_KEY=sk-ant-... docker compose up --build}
+    ports:
+      - '3777:3777'
+    volumes:
+      - storage:/app/api/storage
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  ui:
+    build:
+      context: .
+      dockerfile: ui/Dockerfile
+      args:
+        VITE_API_URL: http://localhost:3777
+    ports:
+      - '3000:80'
+    depends_on:
+      - api
+
 volumes:
   pgdata:
+  storage:
