@@ -5,7 +5,7 @@ import { Page } from '../../../../common/types/page.type';
 import { SaveOptions } from '../../../../common/types/save-options.type';
 import { Cv } from '../../domain/entities/cv.entity';
 import { CvRepository } from '../../domain/repositories/cv.repository';
-import { cvSchema } from '../models/cv.schema';
+import { CvModel, cvSchema } from '../models/cv.schema';
 
 @Injectable()
 export class MikroOrmCvRepository implements CvRepository {
@@ -36,14 +36,17 @@ export class MikroOrmCvRepository implements CvRepository {
   async save(cv: Cv, options: SaveOptions = {}): Promise<void> {
     const { version, ...data } = cvSchema.fromDomain(cv);
     const existing = await this.em.findOne(cvSchema, { id: cv.id });
+    let model: CvModel;
     if (existing) {
       await this.em.lock(existing, LockMode.OPTIMISTIC, version);
-      this.em.assign(existing, data);
+      model = this.em.assign(existing, data);
     } else {
-      this.em.persist(this.em.create(cvSchema, { ...data, version }));
+      model = this.em.create(cvSchema, { ...data, version });
+      this.em.persist(model);
     }
     if (options.flush) {
       await this.em.flush();
+      cv.version = model.version;
     }
   }
 }
