@@ -35,12 +35,18 @@ export class PgBossQueueService
   }
 
   async createQueue(name: string, options: QueueOptions): Promise<void> {
-    await this.boss.createQueue(name, {
-      policy: options.uniquePerKey ? 'exclusive' : 'standard',
+    const settings = {
       retryLimit: options.maxRetries,
       retryDelay: options.retryDelaySeconds,
       retryBackoff: options.retryBackoff,
+      heartbeatSeconds: 30,
+    };
+
+    await this.boss.createQueue(name, {
+      policy: options.uniquePerKey ? 'exclusive' : 'standard',
+      ...settings,
     });
+    await this.boss.updateQueue(name, settings);
   }
 
   async enqueue<T extends object>(
