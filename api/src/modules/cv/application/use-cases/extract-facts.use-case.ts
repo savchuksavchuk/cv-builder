@@ -1,7 +1,10 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { LlmService } from '../../../shared/services/llm.service';
 import { TransactionService } from '../../../shared/services/transaction.service';
-import { STEP_MODELS } from '../../domain/constants/cv-pipeline.constants';
+import {
+  STEP_EFFORT,
+  STEP_MODELS,
+} from '../../domain/constants/cv-pipeline.constants';
 import { Cv } from '../../domain/entities/cv.entity';
 import { CV_REPOSITORY } from '../../domain/repositories/cv.repository';
 import type { CvRepository } from '../../domain/repositories/cv.repository';
@@ -31,6 +34,7 @@ export class ExtractFactsUseCase {
 
     const generated = await this.llm.generateObject({
       model: STEP_MODELS[step]!,
+      effort: STEP_EFFORT[step],
       schema: extractedFactsOutput,
       system: EXTRACT_FACTS_SYSTEM,
       prompt: wrapUntrusted(

@@ -1,4 +1,4 @@
-import { LlmModel } from '../../../shared/services/llm.service';
+import { LlmEffort, LlmModel } from '../../../shared/services/llm.service';
 import { CvStep } from '../types/cv-step';
 
 export const GENERATION_STEPS: CvStep[] = [
@@ -21,9 +21,17 @@ export const NEXT_STEP: Partial<Record<CvStep, CvStep>> = {
 };
 
 export const STEP_MODELS: Partial<Record<CvStep, LlmModel>> = {
-  [CvStep.ExtractFacts]: LlmModel.Sonnet,
+  [CvStep.ExtractFacts]: LlmModel.Haiku,
   [CvStep.GenerateQuestions]: LlmModel.Sonnet,
-  [CvStep.ApplyAnswers]: LlmModel.Sonnet,
+  [CvStep.ApplyAnswers]: LlmModel.Haiku,
   [CvStep.ComposeCv]: LlmModel.Sonnet,
   [CvStep.ValidateResult]: LlmModel.Sonnet,
+};
+
+export const STEP_EFFORT: Partial<Record<CvStep, LlmEffort>> = {
+  [CvStep.ExtractFacts]: 'low',
+  [CvStep.GenerateQuestions]: 'low',
+  [CvStep.ApplyAnswers]: 'low',
+  [CvStep.ComposeCv]: 'medium',
+  [CvStep.ValidateResult]: 'medium',
 };

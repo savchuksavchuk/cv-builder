@@ -5,7 +5,10 @@ import {
   MAX_QUESTIONS_PER_ROUND,
   MAX_QUESTION_ROUNDS,
 } from '../../domain/constants/cv-limits.constants';
-import { STEP_MODELS } from '../../domain/constants/cv-pipeline.constants';
+import {
+  STEP_EFFORT,
+  STEP_MODELS,
+} from '../../domain/constants/cv-pipeline.constants';
 import { Cv } from '../../domain/entities/cv.entity';
 import { CV_REPOSITORY } from '../../domain/repositories/cv.repository';
 import type { CvRepository } from '../../domain/repositories/cv.repository';
@@ -64,6 +67,7 @@ export class GenerateQuestionsUseCase {
 
     const generated = await this.llm.generateObject({
       model: STEP_MODELS[CvStep.GenerateQuestions]!,
+      effort: STEP_EFFORT[CvStep.GenerateQuestions],
       schema: generatedQuestionsOutput,
       system: GENERATE_QUESTIONS_SYSTEM,
       prompt: buildGenerateQuestionsPrompt(cv, paths),

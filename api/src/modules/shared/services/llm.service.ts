@@ -3,11 +3,14 @@ import { Result } from '../../../common/classes/result.class';
 
 export enum LlmModel {
   Sonnet = 'claude-sonnet-5-5',
-  Haiku = 'claude-haiku-4-5-20251001',
+  Haiku = 'claude-haiku-5-5',
 }
+
+export type LlmEffort = 'low' | 'medium' | 'high';
 
 export type GenerateObjectRequest<T> = {
   model: LlmModel;
+  effort?: LlmEffort;
   schema: z.ZodType<T>;
   system: string;
   prompt: string;

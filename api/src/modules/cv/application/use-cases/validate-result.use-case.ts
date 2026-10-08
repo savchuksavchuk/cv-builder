@@ -2,7 +2,10 @@ import { Inject, Injectable } from '@nestjs/common';
 import { LlmService } from '../../../shared/services/llm.service';
 import { TransactionService } from '../../../shared/services/transaction.service';
 import { MAX_COMPOSE_REGENERATIONS } from '../../domain/constants/cv-limits.constants';
-import { STEP_MODELS } from '../../domain/constants/cv-pipeline.constants';
+import {
+  STEP_EFFORT,
+  STEP_MODELS,
+} from '../../domain/constants/cv-pipeline.constants';
 import { Cv } from '../../domain/entities/cv.entity';
 import { CV_REPOSITORY } from '../../domain/repositories/cv.repository';
 import type { CvRepository } from '../../domain/repositories/cv.repository';
@@ -87,6 +90,7 @@ export class ValidateResultUseCase {
   ): Promise<Verdict> {
     const generated = await this.llm.generateObject({
       model: STEP_MODELS[CvStep.ValidateResult]!,
+      effort: STEP_EFFORT[CvStep.ValidateResult],
       schema: validateResultOutput,
       system: VALIDATE_RESULT_SYSTEM,
       prompt: buildValidateResultPrompt(document, values),
