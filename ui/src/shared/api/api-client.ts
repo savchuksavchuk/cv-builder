@@ -13,7 +13,9 @@ $api.interceptors.response.use(
       const message = error.response?.data?.message
       throw new ApiError(
         error.response?.status ?? null,
-        Array.isArray(message) ? message.join(', ') : (message ?? error.message),
+        Array.isArray(message)
+          ? message.join(', ')
+          : (message ?? error.message),
       )
     }
     throw error
