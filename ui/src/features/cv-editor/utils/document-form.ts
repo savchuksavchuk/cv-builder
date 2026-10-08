@@ -1,7 +1,28 @@
 import type { CvDocument } from '@cv-builder/cv-template'
 import { z } from 'zod'
+import { CV_LIMITS } from '@/entities/cv'
+
+const toList = (value: string) =>
+  value
+    .split(/[\n,]/)
+    .map((v) => v.trim())
+    .filter(Boolean)
 
 const text = z.string().trim()
+const maxChars = (max: number) =>
+  text.max(max, `At most ${max.toLocaleString('en-US')} characters`)
+const field = maxChars(CV_LIMITS.FIELD)
+const list = text
+  .refine(
+    (v) => toList(v).length <= CV_LIMITS.LIST_ITEMS,
+    `At most ${CV_LIMITS.LIST_ITEMS} items`,
+  )
+  .refine(
+    (v) => toList(v).every((item) => item.length <= CV_LIMITS.FIELD),
+    `Each item must be at most ${CV_LIMITS.FIELD} characters`,
+  )
+const items = <T extends z.ZodType>(item: T) =>
+  z.array(item).max(CV_LIMITS.LIST_ITEMS)
 const startMonth = text.regex(/^(\d{4}-(0[1-9]|1[0-2]))?$/, 'Use YYYY-MM')
 const endMonth = text.regex(
   /^(\d{4}-(0[1-9]|1[0-2])|present)?$/,
@@ -10,42 +31,46 @@ const endMonth = text.regex(
 
 export const DocumentFormSchema = z.object({
   header: z.object({
-    fullName: text,
-    email: text,
-    phone: text,
-    location: text,
-    links: text,
+    fullName: field,
+    email: field,
+    phone: field,
+    location: field,
+    links: list,
   }),
-  summary: text,
-  skills: text,
-  experience: z.array(
+  summary: maxChars(CV_LIMITS.SUMMARY),
+  skills: list,
+  experience: items(
     z.object({
       id: z.string(),
-      company: text,
-      title: text,
-      location: text,
+      company: field,
+      title: field,
+      location: field,
       startDate: startMonth,
       endDate: endMonth,
-      bullets: z.array(
-        z.object({ id: z.string(), text, sourceIds: z.array(z.string()) }),
+      bullets: items(
+        z.object({
+          id: z.string(),
+          text: maxChars(CV_LIMITS.BULLET),
+          sourceIds: z.array(z.string()),
+        }),
       ),
     }),
   ),
-  education: z.array(
+  education: items(
     z.object({
       id: z.string(),
-      institution: text,
-      degree: text,
-      fieldOfStudy: text,
+      institution: field,
+      degree: field,
+      fieldOfStudy: field,
       startDate: startMonth,
       endDate: endMonth,
     }),
   ),
-  certifications: z.array(
+  certifications: items(
     z.object({
       id: z.string(),
-      name: text,
-      issuer: text,
+      name: field,
+      issuer: field,
       issueDate: startMonth,
     }),
   ),
@@ -55,12 +80,6 @@ export type DocumentFormValues = z.infer<typeof DocumentFormSchema>
 
 const orEmpty = (value: string | null) => value ?? ''
 const orNull = (value: string) => value.trim() || null
-const toList = (value: string) =>
-  value
-    .split(/[\n,]/)
-    .map((v) => v.trim())
-    .filter(Boolean)
-
 export const toFormValues = (doc: CvDocument): DocumentFormValues => ({
   header: {
     fullName: orEmpty(doc.header.fullName),

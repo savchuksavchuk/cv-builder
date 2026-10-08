@@ -1,6 +1,7 @@
 import { z } from 'zod'
+import { CV_LIMITS } from '@/entities/cv'
 
-const MAX_FILE_SIZE = 10 * 1024 * 1024
+const formatNumber = (value: number) => value.toLocaleString('en-US')
 
 export const CvCreateSchema = z
   .object({
@@ -8,18 +9,30 @@ export const CvCreateSchema = z
       .string()
       .trim()
       .min(1, 'Target role is required')
-      .max(120, 'Target role must be at most 120 characters'),
-    text: z.string().max(20000, 'Text must be at most 20 000 characters'),
+      .max(
+        CV_LIMITS.TARGET_ROLE,
+        `Target role must be at most ${CV_LIMITS.TARGET_ROLE} characters`,
+      ),
+    text: z
+      .string()
+      .trim()
+      .max(
+        CV_LIMITS.INPUT_TEXT,
+        `Text must be at most ${formatNumber(CV_LIMITS.INPUT_TEXT)} characters`,
+      ),
     file: z
       .instanceof(File)
       .refine(
         (f) => f.type === 'application/pdf',
         'Only PDF files are supported',
       )
-      .refine((f) => f.size <= MAX_FILE_SIZE, 'File is larger than 10 MB')
+      .refine(
+        (f) => f.size <= CV_LIMITS.PDF_BYTES,
+        `File is larger than ${CV_LIMITS.PDF_BYTES / 1024 / 1024} MB`,
+      )
       .optional(),
   })
-  .refine((data) => data.text.trim() || data.file, {
+  .refine((data) => data.text || data.file, {
     path: ['text'],
     message: 'Provide text, a PDF file, or both',
   })

@@ -16,3 +16,14 @@ export const STATUS_LABELS: Record<CvStatus, string> = {
   [CvStatus.Completed]: 'Completed',
   [CvStatus.Failed]: 'Failed',
 }
+
+export const CV_LIMITS = {
+  TARGET_ROLE: 120,
+  INPUT_TEXT: 20_000,
+  ANSWER: 2_000,
+  FIELD: 200,
+  BULLET: 400,
+  SUMMARY: 2_000,
+  LIST_ITEMS: 50,
+  PDF_BYTES: 10 * 1024 * 1024,
+}

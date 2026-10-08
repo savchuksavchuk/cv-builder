@@ -1,12 +1,11 @@
 import { Loader2 } from 'lucide-react'
+import { CV_LIMITS } from '@/entities/cv'
 import { Button } from '@/shared/ui/button'
 import { CharCounter } from '@/shared/ui/char-counter'
 import { Input } from '@/shared/ui/input'
 import { Label } from '@/shared/ui/label'
 import { Textarea } from '@/shared/ui/textarea'
 import { useCvCreateForm } from '../hooks/use-cv-create-form'
-
-const MAX_TEXT_LENGTH = 20000
 
 export const CvCreateForm = () => {
   const { form, isPending, error, onSubmit } = useCvCreateForm()
@@ -43,7 +42,7 @@ export const CvCreateForm = () => {
           aria-invalid={!!errors.text}
           {...register('text')}
         />
-        <CharCounter length={watch('text').length} max={MAX_TEXT_LENGTH} />
+        <CharCounter length={watch('text').length} max={CV_LIMITS.INPUT_TEXT} />
         {errors.text && (
           <p className="text-destructive text-sm">{errors.text.message}</p>
         )}

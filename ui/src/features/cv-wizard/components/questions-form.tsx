@@ -1,13 +1,11 @@
 import { Loader2 } from 'lucide-react'
 import { useForm, useWatch } from 'react-hook-form'
-import type { CvQuestion } from '@/entities/cv'
+import { CV_LIMITS, type CvQuestion } from '@/entities/cv'
 import { Button } from '@/shared/ui/button'
 import { CharCounter } from '@/shared/ui/char-counter'
 import { Label } from '@/shared/ui/label'
 import { Textarea } from '@/shared/ui/textarea'
 import { useSubmitAnswers } from '../hooks/use-submit-answers'
-
-const MAX_ANSWER_LENGTH = 2000
 
 type FormData = Record<string, string>
 
@@ -50,14 +48,14 @@ export const QuestionsForm = ({
             aria-invalid={!!errors[q.id]}
             {...register(q.id, {
               maxLength: {
-                value: MAX_ANSWER_LENGTH,
-                message: 'Answer must be at most 2000 characters',
+                value: CV_LIMITS.ANSWER,
+                message: `Answer must be at most ${CV_LIMITS.ANSWER.toLocaleString('en-US')} characters`,
               },
             })}
           />
           <CharCounter
             length={values[q.id]?.length ?? 0}
-            max={MAX_ANSWER_LENGTH}
+            max={CV_LIMITS.ANSWER}
           />
           {errors[q.id] && (
             <p className="text-destructive text-sm">{errors[q.id]?.message}</p>

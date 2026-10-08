@@ -1,4 +1,5 @@
 import { useFieldArray, useFormContext } from 'react-hook-form'
+import { CV_LIMITS } from '@/entities/cv'
 import type { DocumentFormValues } from '../../utils/document-form'
 import { emptyExperience } from '../../utils/empty-items'
 import { AddButton } from '../form/add-button'
@@ -20,6 +21,7 @@ export const ExperienceSection = () => {
       ))}
       <AddButton
         label="Add experience"
+        disabled={experience.fields.length >= CV_LIMITS.LIST_ITEMS}
         onClick={() => experience.append(emptyExperience())}
       />
     </EditorSection>
