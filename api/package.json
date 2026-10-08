@@ -18,10 +18,12 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "migration:create": "nest build && MIKRO_ORM_MIGRATIONS_PATH=src/database/migrations mikro-orm migration:create"
+    "migration:create": "nest build && MIKRO_ORM_MIGRATIONS_PATH=src/database/migrations mikro-orm migration:create",
+    "prebuild": "npm --prefix ../packages/cv-template run build"
   },
   "dependencies": {
     "@ai-sdk/anthropic": "^4.0.75",
+    "@cv-builder/cv-template": "file:../packages/cv-template",
     "@mikro-orm/core": "^7.2.4",
     "@mikro-orm/migrations": "^7.2.4",
     "@mikro-orm/nestjs": "^7.1.0",
