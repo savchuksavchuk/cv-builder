@@ -43,7 +43,7 @@ export const CvEditor = ({
         <EducationSection />
         <CertificationsSection />
 
-        <div className="flex justify-end gap-3">
+        <div className="bg-background/95 sticky bottom-0 -mx-4 flex justify-end gap-3 border-t px-4 py-3 backdrop-blur">
           <Button type="button" variant="outline" onClick={onCancel}>
             Cancel
           </Button>
