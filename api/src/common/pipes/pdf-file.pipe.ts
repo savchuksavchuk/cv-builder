@@ -1,7 +1,6 @@
 import {
   BadRequestException,
   Injectable,
-  PayloadTooLargeException,
   PipeTransform,
   UnsupportedMediaTypeException,
 } from '@nestjs/common';
@@ -23,9 +22,6 @@ export class PdfFilePipe implements PipeTransform<
         throw new BadRequestException('PDF file is required');
       }
       return undefined;
-    }
-    if (file.size > MAX_PDF_BYTES) {
-      throw new PayloadTooLargeException('PDF must be at most 10 MB');
     }
     if (
       file.mimetype !== 'application/pdf' ||

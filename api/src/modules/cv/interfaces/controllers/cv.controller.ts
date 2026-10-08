@@ -26,7 +26,10 @@ import { CvListResponseDTO } from '../../application/responses/cv-list-response.
 import { ListCvsUseCase } from '../../application/use-cases/list-cvs.use-case';
 import { CurrentUser } from '../../../../common/decorators/current-user.decorator';
 import { AuthGuard } from '../../../../common/guards/auth.guard';
-import { PdfFilePipe } from '../../../../common/pipes/pdf-file.pipe';
+import {
+  MAX_PDF_BYTES,
+  PdfFilePipe,
+} from '../../../../common/pipes/pdf-file.pipe';
 import type { UserPayload } from '../../../../common/types/user-payload.type';
 import {
   MAX_INPUT_CHARS,
@@ -71,7 +74,9 @@ export class CvController {
       description: 'Send text, a PDF file (text layer, up to 10 MB), or both',
     },
   })
-  @UseInterceptors(FileInterceptor('file', { limits: { files: 1 } }))
+  @UseInterceptors(
+    FileInterceptor('file', { limits: { files: 1, fileSize: MAX_PDF_BYTES } }),
+  )
   async init(
     @CurrentUser() user: UserPayload,
     @Body() dto: InitCvDto,
