@@ -1,14 +1,15 @@
 import { useState } from 'react'
 import type { Cv } from '@/entities/cv'
-import { Button } from '@/shared/ui/button'
 import { CvEditor } from '@/features/cv-editor'
+import { Button } from '@/shared/ui/button'
+import { useUpdateCv } from '../hooks/use-update-cv'
 import { CvPreview } from './cv-preview'
 
 export const CvResult = ({ cv }: { cv: Cv }) => {
-  const [document, setDocument] = useState(cv.document)
   const [editing, setEditing] = useState(false)
+  const { update, isPending, error, reset } = useUpdateCv(cv)
 
-  if (!document) {
+  if (!cv.document) {
     return (
       <p className="text-muted-foreground py-12 text-center text-sm">
         The CV has no content
@@ -19,27 +20,28 @@ export const CvResult = ({ cv }: { cv: Cv }) => {
   if (editing) {
     return (
       <CvEditor
-        document={document}
-        onSave={(next) => {
-          setDocument(next)
+        document={cv.document}
+        isSaving={isPending}
+        error={error}
+        onSave={(document) =>
+          update(document, { onSuccess: () => setEditing(false) })
+        }
+        onCancel={() => {
+          reset()
           setEditing(false)
         }}
-        onCancel={() => setEditing(false)}
       />
     )
   }
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex items-center justify-between gap-3">
-        <p className="text-muted-foreground text-xs">
-          Edits are kept only until you leave this page.
-        </p>
+      <div className="flex justify-end">
         <Button variant="outline" onClick={() => setEditing(true)}>
           Edit
         </Button>
       </div>
-      <CvPreview document={document} />
+      <CvPreview document={cv.document} />
     </div>
   )
 }

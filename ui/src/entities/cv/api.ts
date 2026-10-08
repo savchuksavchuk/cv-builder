@@ -1,5 +1,5 @@
 import { $api } from '@/shared/api/api-client'
-import type { Cv, CvAnswer, CvSummary, Paginated } from './types'
+import type { Cv, CvAnswer, CvSummary, Paginated, UpdateCvBody } from './types'
 
 export class CvApi {
   static async getList(params: { page: number; limit: number }) {
@@ -19,6 +19,11 @@ export class CvApi {
 
   static async submitAnswers(id: string, answers: CvAnswer[]) {
     const { data } = await $api.post<Cv>(`/cvs/${id}/answers`, { answers })
+    return data
+  }
+
+  static async update(id: string, body: UpdateCvBody) {
+    const { data } = await $api.patch<Cv>(`/cvs/${id}`, body)
     return data
   }
 }

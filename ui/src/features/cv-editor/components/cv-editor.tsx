@@ -1,5 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import type { CvDocument } from '@cv-builder/cv-template'
+import { Loader2 } from 'lucide-react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { Button } from '@/shared/ui/button'
 import {
@@ -17,10 +18,14 @@ import { SummarySection } from './sections/summary-section'
 
 export const CvEditor = ({
   document,
+  isSaving = false,
+  error = null,
   onSave,
   onCancel,
 }: {
   document: CvDocument
+  isSaving?: boolean
+  error?: string | null
   onSave: (document: CvDocument) => void
   onCancel: () => void
 }) => {
@@ -43,11 +48,22 @@ export const CvEditor = ({
         <EducationSection />
         <CertificationsSection />
 
-        <div className="bg-background/95 sticky bottom-0 -mx-4 flex justify-end gap-3 border-t px-4 py-3 backdrop-blur">
-          <Button type="button" variant="outline" onClick={onCancel}>
-            Cancel
-          </Button>
-          <Button type="submit">Save</Button>
+        <div className="bg-background/95 sticky bottom-0 -mx-4 grid gap-2 border-t px-4 py-3 backdrop-blur">
+          {error && <p className="text-destructive text-sm">{error}</p>}
+          <div className="flex justify-end gap-3">
+            <Button
+              type="button"
+              variant="outline"
+              disabled={isSaving}
+              onClick={onCancel}
+            >
+              Cancel
+            </Button>
+            <Button type="submit" disabled={isSaving}>
+              {isSaving && <Loader2 className="animate-spin" />}
+              Save
+            </Button>
+          </div>
         </div>
       </form>
     </FormProvider>

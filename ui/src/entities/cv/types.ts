@@ -56,3 +56,12 @@ export interface CvAnswer {
   questionId: string
   answer: string | null
 }
+
+type CvExperience = CvDocument['experience'][number]
+
+export type UpdateCvBody = Omit<CvDocument, 'experience'> & {
+  version: number
+  experience: (Omit<CvExperience, 'bullets'> & {
+    bullets: Pick<CvExperience['bullets'][number], 'id' | 'text'>[]
+  })[]
+}
