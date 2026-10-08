@@ -1,15 +1,11 @@
 import { FactField, FactSection } from '../types/fact';
 import { Question, QuestionStatus, pathOf } from '../types/question';
-import {
-  RawFact,
-  addFacts,
-  askableTargets,
-  entries,
-  first,
-  mergeAnswerFacts,
-  parseFacts,
-  verifyFacts,
-} from './facts';
+import { askableTargets } from './askable-targets';
+import { connectQuestionAnswersToFacts } from './connect-question-answers-to-facts';
+import { entries, first } from './fact-entries';
+import { RawFact, parseExtractedFacts } from './parse-extracted-facts';
+import { parseQuestionAnswers } from './parse-question-answers';
+import { verifyFacts } from './verify-facts';
 
 const raw = (
   section: FactSection,
@@ -21,25 +17,17 @@ const raw = (
 
 const SOURCE = 'Jane Doe. Acme: Dev. Built APIs.';
 
-const facts = addFacts(
-  [],
-  parseFacts(
-    [
-      raw(FactSection.Contacts, 5, FactField.FullName, 'Jane Doe'),
-      raw(FactSection.WorkExperience, 1, FactField.Company, 'Acme'),
-      raw(FactSection.WorkExperience, 1, FactField.Company, 'Dupe'),
-      raw(
-        FactSection.WorkExperience,
-        1,
-        FactField.Responsibility,
-        'Built APIs',
-      ),
-      raw(FactSection.WorkExperience, 0, FactField.Company, 'Old'),
-      raw(FactSection.WorkExperience, 0, FactField.Email, 'bad field'),
-      raw(FactSection.WorkExperience, 0, FactField.Title, ' ', 'x'),
-    ],
-    'src',
-  ),
+const facts = parseExtractedFacts(
+  [
+    raw(FactSection.Contacts, 5, FactField.FullName, 'Jane Doe'),
+    raw(FactSection.WorkExperience, 1, FactField.Company, 'Acme'),
+    raw(FactSection.WorkExperience, 1, FactField.Company, 'Dupe'),
+    raw(FactSection.WorkExperience, 1, FactField.Responsibility, 'Built APIs'),
+    raw(FactSection.WorkExperience, 0, FactField.Company, 'Old'),
+    raw(FactSection.WorkExperience, 0, FactField.Email, 'bad field'),
+    raw(FactSection.WorkExperience, 0, FactField.Title, ' ', 'x'),
+  ],
+  'src',
 );
 
 const question = (
@@ -55,7 +43,7 @@ const question = (
   updatedAt: '',
 });
 
-describe('parseFacts / addFacts', () => {
+describe('parseExtractedFacts', () => {
   it('drops malformed rows, groups by entry in entry order, keeps the first scalar', () => {
     const jobs = entries(facts, FactSection.WorkExperience);
 
@@ -80,7 +68,7 @@ describe('verifyFacts', () => {
   });
 });
 
-describe('mergeAnswerFacts', () => {
+describe('parseQuestionAnswers / connectQuestionAnswersToFacts', () => {
   const job = entries(facts, FactSection.WorkExperience)[1];
   const company = question({
     section: FactSection.WorkExperience,
@@ -106,16 +94,18 @@ describe('mergeAnswerFacts', () => {
   });
 
   it('replaces a scalar, extends a list, adds new jobs and ignores other fields', () => {
-    const merged = mergeAnswerFacts(
+    const merged = connectQuestionAnswersToFacts(
       facts,
-      [company, duty, newJobs],
-      [
-        out(company, FactField.Company, 'Acme Inc'),
-        out(company, FactField.Title, 'ignored: not asked'),
-        out(duty, FactField.Responsibility, 'Led team'),
-        out(newJobs, FactField.Company, 'NewCo'),
-        out(newJobs, FactField.Title, 'CTO'),
-      ],
+      parseQuestionAnswers(
+        [company, duty, newJobs],
+        [
+          out(company, FactField.Company, 'Acme Inc'),
+          out(company, FactField.Title, 'ignored: not asked'),
+          out(duty, FactField.Responsibility, 'Led team'),
+          out(newJobs, FactField.Company, 'NewCo'),
+          out(newJobs, FactField.Title, 'CTO'),
+        ],
+      ),
     );
     const jobs = entries(merged, FactSection.WorkExperience);
 
@@ -130,7 +120,7 @@ describe('mergeAnswerFacts', () => {
 });
 
 describe('askableTargets', () => {
-  const [degree] = parseFacts(
+  const [degree] = parseExtractedFacts(
     [raw(FactSection.Education, 0, FactField.Degree, 'MSc')],
     'src',
   );

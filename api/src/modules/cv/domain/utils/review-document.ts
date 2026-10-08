@@ -30,6 +30,7 @@ export function reviewDocument(document: CvDocument, verdict: Verdict): Review {
   }
 
   const summaryRejected = !!document.summary && !verdict.summarySupported;
+
   if (summaryRejected) {
     feedback.push(
       `Summary was rejected: ${verdict.summaryReason || 'not supported by the facts'}`,

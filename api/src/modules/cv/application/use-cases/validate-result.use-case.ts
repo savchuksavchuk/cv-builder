@@ -11,7 +11,7 @@ import { CV_REPOSITORY } from '../../domain/repositories/cv.repository';
 import type { CvRepository } from '../../domain/repositories/cv.repository';
 import { CvStatus } from '../../domain/types/cv-status';
 import { CvStep } from '../../domain/types/cv-step';
-import { sourceValues } from '../../domain/utils/facts';
+import { sourceValues } from '../../domain/utils/source-values';
 import {
   Verdict,
   reviewDocument,

@@ -2,7 +2,7 @@ import { MAX_QUESTIONS_PER_ROUND } from '../../domain/constants/cv-limits.consta
 import { Cv } from '../../domain/entities/cv.entity';
 import { pathOf } from '../../domain/types/question';
 import { wrapUntrusted } from '../../domain/utils/untrusted';
-import { factsForPrompt } from '../../domain/utils/facts-for-prompt';
+import { composeFactsForPrompt } from '../../domain/utils/compose-facts-for-prompt';
 
 export const GENERATE_QUESTIONS_SYSTEM = `You are a stage of an AI CV builder. Earlier stages extracted structured facts from a candidate's existing CV, and each fact was verified against the source text. A later stage will write a new CV for the candidate's target role, and it may only use facts that are present. It must never invent anything.
 
@@ -27,7 +27,11 @@ Rules:
 export function buildGenerateQuestionsPrompt(cv: Cv, paths: string[]): string {
   return [
     wrapUntrusted('target_role', 'target_role', cv.targetRole),
-    wrapUntrusted('document', 'extracted_facts', factsForPrompt(cv.facts)),
+    wrapUntrusted(
+      'document',
+      'extracted_facts',
+      composeFactsForPrompt(cv.facts),
+    ),
     `Already asked (do not repeat):\n${cv.questions.map((q) => `- [${q.status}] ${pathOf(q.target)}: "${q.question}"`).join('\n') || 'none'}`,
     `Allowed paths:\n${paths.join('\n')}`,
   ].join('\n\n');

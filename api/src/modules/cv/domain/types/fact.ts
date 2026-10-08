@@ -61,7 +61,7 @@ export const SECTION_FIELDS: Record<FactSection, FactField[]> = {
   ],
 };
 
-export const LIST_FIELDS: ReadonlySet<FactField> = new Set([
+export const MULTI_VALUE_FIELDS: ReadonlySet<FactField> = new Set([
   FactField.Link,
   FactField.Responsibility,
   FactField.Achievement,

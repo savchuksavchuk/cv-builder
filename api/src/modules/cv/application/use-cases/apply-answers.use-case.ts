@@ -11,7 +11,8 @@ import type { CvRepository } from '../../domain/repositories/cv.repository';
 import { CvStatus } from '../../domain/types/cv-status';
 import { CvStep } from '../../domain/types/cv-step';
 import { Question, QuestionStatus } from '../../domain/types/question';
-import { mergeAnswerFacts } from '../../domain/utils/facts';
+import { connectQuestionAnswersToFacts } from '../../domain/utils/connect-question-answers-to-facts';
+import { parseQuestionAnswers } from '../../domain/utils/parse-question-answers';
 import { applyAnswersOutput } from '../llm/apply-answers.output';
 import {
   APPLY_ANSWERS_SYSTEM,
@@ -37,7 +38,10 @@ export class ApplyAnswersUseCase {
     const facts = answered.length ? await this.extractFacts(answered) : [];
 
     const applied = cv.applyAnswers(
-      mergeAnswerFacts(cv.facts, answered, facts),
+      connectQuestionAnswersToFacts(
+        cv.facts,
+        parseQuestionAnswers(answered, facts),
+      ),
     );
 
     if (!applied.success) {

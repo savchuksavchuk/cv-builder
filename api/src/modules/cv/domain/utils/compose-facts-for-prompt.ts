@@ -1,7 +1,12 @@
-import { Fact, FactSection, LIST_FIELDS, SECTION_FIELDS } from '../types/fact';
-import { all, entries } from './facts';
+import {
+  Fact,
+  FactSection,
+  MULTI_VALUE_FIELDS,
+  SECTION_FIELDS,
+} from '../types/fact';
+import { all, entries } from './fact-entries';
 
-export function factsForPrompt(facts: Fact[]): string {
+export function composeFactsForPrompt(facts: Fact[]): string {
   const view = Object.values(FactSection).map((section) => [
     section,
     entries(facts, section).map((entry) => ({
@@ -16,7 +21,7 @@ export function factsForPrompt(facts: Fact[]): string {
           return [
             [
               field,
-              LIST_FIELDS.has(field)
+              MULTI_VALUE_FIELDS.has(field)
                 ? own.map((fact) => ({ id: fact.id, text: fact.value }))
                 : own[0].value,
             ],

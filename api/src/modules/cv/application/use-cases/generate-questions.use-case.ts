@@ -15,7 +15,7 @@ import type { CvRepository } from '../../domain/repositories/cv.repository';
 import { CvStatus } from '../../domain/types/cv-status';
 import { CvStep } from '../../domain/types/cv-step';
 import { QuestionDraft } from '../../domain/types/question';
-import { askableTargets } from '../../domain/utils/facts';
+import { askableTargets } from '../../domain/utils/askable-targets';
 import { generatedQuestionsOutput } from '../llm/generate-questions.output';
 import {
   GENERATE_QUESTIONS_SYSTEM,

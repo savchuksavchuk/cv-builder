@@ -11,7 +11,7 @@ import type { CvRepository } from '../../domain/repositories/cv.repository';
 import { CvStatus } from '../../domain/types/cv-status';
 import { CvStep } from '../../domain/types/cv-step';
 import { INITIAL_USER_INPUT_SOURCE } from '../../domain/types/fact';
-import { parseFacts } from '../../domain/utils/facts';
+import { parseExtractedFacts } from '../../domain/utils/parse-extracted-facts';
 import { wrapUntrusted } from '../../domain/utils/untrusted';
 import { EXTRACT_FACTS_SYSTEM } from '../llm/extract-facts.prompt';
 import { extractedFactsOutput } from '../llm/extracted-facts.output';
@@ -47,7 +47,7 @@ export class ExtractFactsUseCase {
     }
 
     const applied = cv.applyExtractedFacts(
-      parseFacts(generated.dto.facts, INITIAL_USER_INPUT_SOURCE),
+      parseExtractedFacts(generated.dto.facts),
     );
 
     if (!applied.success) {

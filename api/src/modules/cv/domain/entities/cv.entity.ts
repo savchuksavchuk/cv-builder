@@ -10,7 +10,7 @@ import {
   NEXT_STEP,
 } from '../constants/cv-pipeline.constants';
 import { normalizeText } from '../utils/normalize-text';
-import { verifyFacts } from '../utils/facts';
+import { verifyFacts } from '../utils/verify-facts';
 import { CvDocument, CvDocumentPatch } from '../types/cv-document';
 import { CvStatus } from '../types/cv-status';
 import { CvStep } from '../types/cv-step';

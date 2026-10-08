@@ -2,7 +2,7 @@ import { randomUUID } from 'node:crypto';
 import { MAX_BULLET_CHARS } from '../constants/cv-limits.constants';
 import { CvBullet, CvDocument } from '../types/cv-document';
 import { Fact, FactField as F, FactSection } from '../types/fact';
-import { Entry, all, entries, first } from './facts';
+import { Entry, all, entries, first } from './fact-entries';
 
 export type Composition = {
   summary: string;
