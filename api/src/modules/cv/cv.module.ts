@@ -14,6 +14,9 @@ import { VerifyEvidenceUseCase } from './application/use-cases/verify-evidence.u
 import { ApplyAnswersUseCase } from './application/use-cases/apply-answers.use-case';
 import { SubmitAnswersUseCase } from './application/use-cases/submit-answers.use-case';
 import { UpdateCvUseCase } from './application/use-cases/update-cv.use-case';
+import { ExportCvPdfUseCase } from './application/use-cases/export-cv-pdf.use-case';
+import { PDF_RENDERER_PORT } from './application/ports/pdf-renderer.port';
+import { PuppeteerPdfRendererPortImplementation } from './infrastructure/ports/puppeteer-pdf-renderer.port-implementation';
 import { GetCvUseCase } from './application/use-cases/get-cv.use-case';
 import { ListCvsUseCase } from './application/use-cases/list-cvs.use-case';
 import { InitCvUseCase } from './application/use-cases/init-cv.use-case';
@@ -39,6 +42,11 @@ import { CvController } from './interfaces/controllers/cv.controller';
     InitCvUseCase,
     GetCvUseCase,
     UpdateCvUseCase,
+    ExportCvPdfUseCase,
+    {
+      provide: PDF_RENDERER_PORT,
+      useClass: PuppeteerPdfRendererPortImplementation,
+    },
     ListCvsUseCase,
     ComposeCvUseCase,
     ValidateResultUseCase,
