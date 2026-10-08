@@ -13,6 +13,7 @@ import { GenerateQuestionsUseCase } from './application/use-cases/generate-quest
 import { VerifyEvidenceUseCase } from './application/use-cases/verify-evidence.use-case';
 import { ApplyAnswersUseCase } from './application/use-cases/apply-answers.use-case';
 import { SubmitAnswersUseCase } from './application/use-cases/submit-answers.use-case';
+import { UpdateCvUseCase } from './application/use-cases/update-cv.use-case';
 import { GetCvUseCase } from './application/use-cases/get-cv.use-case';
 import { ListCvsUseCase } from './application/use-cases/list-cvs.use-case';
 import { InitCvUseCase } from './application/use-cases/init-cv.use-case';
@@ -37,6 +38,7 @@ import { CvController } from './interfaces/controllers/cv.controller';
   providers: [
     InitCvUseCase,
     GetCvUseCase,
+    UpdateCvUseCase,
     ListCvsUseCase,
     ComposeCvUseCase,
     ValidateResultUseCase,

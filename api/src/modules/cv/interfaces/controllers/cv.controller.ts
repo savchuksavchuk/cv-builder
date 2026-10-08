@@ -4,6 +4,7 @@ import {
   Get,
   HttpCode,
   Param,
+  Patch,
   ParseUUIDPipe,
   Post,
   Query,
@@ -28,6 +29,8 @@ import { InitCvDto } from '../../application/dto/init-cv.dto';
 import { CvResponseDTO } from '../../application/responses/cv-response.dto';
 import { SubmitAnswersDto } from '../../application/dto/submit-answers.dto';
 import { SubmitAnswersUseCase } from '../../application/use-cases/submit-answers.use-case';
+import { UpdateCvDto } from '../../application/dto/update-cv.dto';
+import { UpdateCvUseCase } from '../../application/use-cases/update-cv.use-case';
 import { GetCvUseCase } from '../../application/use-cases/get-cv.use-case';
 import { InitCvUseCase } from '../../application/use-cases/init-cv.use-case';
 
@@ -41,6 +44,7 @@ export class CvController {
     private readonly getCv: GetCvUseCase,
     private readonly listCvs: ListCvsUseCase,
     private readonly submitAnswers: SubmitAnswersUseCase,
+    private readonly updateCv: UpdateCvUseCase,
   ) {}
 
   @Post()
@@ -91,5 +95,14 @@ export class CvController {
     @Body() dto: SubmitAnswersDto,
   ): Promise<CvResponseDTO> {
     return this.submitAnswers.execute(user.sub, id, dto);
+  }
+
+  @Patch(':id')
+  async update(
+    @CurrentUser() user: UserPayload,
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() dto: UpdateCvDto,
+  ): Promise<CvResponseDTO> {
+    return this.updateCv.execute(user.sub, id, dto);
   }
 }

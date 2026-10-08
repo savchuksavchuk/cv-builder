@@ -12,7 +12,7 @@ import {
 import { QuestionDraft } from '../utils/question-paths';
 import { normalizeText } from '../utils/normalize-text';
 import { VerifiableSections, verifySections } from '../utils/verify-evidence';
-import { CvDocument } from '../types/cv-document';
+import { CvDocument, CvDocumentPatch } from '../types/cv-document';
 import { Certification } from '../types/certification';
 import { Contacts } from '../types/contacts';
 import { CvStatus } from '../types/cv-status';
@@ -455,6 +455,100 @@ export class Cv {
     return builder.setSuccess(true).build();
   }
 
+  editDocument(version: number, patch: CvDocumentPatch): Result {
+    const builder = new ResultBuilder();
+
+    if (this.status !== CvStatus.Completed || !this.document) {
+      return builder
+        .setSuccess(false)
+        .setMessage('CV is not completed')
+        .build();
+    }
+
+    if (version !== this.version) {
+      return builder
+        .setSuccess(false)
+        .setMessage('CV was modified, reload it')
+        .build();
+    }
+
+    const doc = this.document;
+    const clean = (value: string | null) => value?.trim() || null;
+    const ids = idResolver(
+      [...doc.experience, ...doc.education, ...doc.certifications].map(
+        (item) => item.id,
+      ),
+    );
+    const sourceIds = new Map(
+      doc.experience.flatMap((job) =>
+        job.bullets.map((bullet) => [bullet.id, bullet.sourceIds]),
+      ),
+    );
+    const bulletIds = idResolver([...sourceIds.keys()]);
+
+    if (patch.header) {
+      const { links, ...fields } = patch.header;
+      doc.header = {
+        fullName: clean(fields.fullName),
+        email: clean(fields.email),
+        phone: clean(fields.phone),
+        location: clean(fields.location),
+        links: [...new Set(links.map((l) => l.trim()).filter(Boolean))],
+      };
+    }
+    if (patch.summary !== undefined) {
+      doc.summary = clean(patch.summary);
+    }
+    if (patch.skills) {
+      doc.skills = [
+        ...new Set(patch.skills.map((s) => s.trim()).filter(Boolean)),
+      ];
+    }
+    if (patch.experience) {
+      doc.experience = patch.experience.map((job) => ({
+        id: ids(job.id),
+        company: clean(job.company),
+        title: clean(job.title),
+        location: clean(job.location),
+        startDate: job.startDate,
+        endDate: job.endDate,
+        bullets: job.bullets
+          .map((bullet) => ({ ...bullet, text: bullet.text.trim() }))
+          .filter((bullet) => bullet.text)
+          .map((bullet) => {
+            const id = bulletIds(bullet.id);
+            return {
+              id,
+              text: bullet.text,
+              sourceIds: sourceIds.get(id) ?? [],
+            };
+          }),
+      }));
+    }
+    if (patch.education) {
+      doc.education = patch.education.map((item) => ({
+        id: ids(item.id),
+        institution: clean(item.institution),
+        degree: clean(item.degree),
+        fieldOfStudy: clean(item.fieldOfStudy),
+        startDate: item.startDate,
+        endDate: item.endDate,
+      }));
+    }
+    if (patch.certifications) {
+      doc.certifications = patch.certifications.map((item) => ({
+        id: ids(item.id),
+        name: clean(item.name),
+        issuer: clean(item.issuer),
+        issueDate: item.issueDate,
+      }));
+    }
+
+    this.touch();
+
+    return builder.setSuccess(true).build();
+  }
+
   private touch(): void {
     this.updatedAt = new Date();
   }
@@ -483,4 +577,16 @@ export class Cv {
       updatedAt: this.updatedAt,
     });
   }
+}
+
+// Keeps a client id only if it is known and not used yet; otherwise a new one.
+function idResolver(known: string[]): (id?: string) => string {
+  const available = new Set(known);
+
+  return (id) => {
+    if (id && available.delete(id)) {
+      return id;
+    }
+    return randomUUID();
+  };
 }

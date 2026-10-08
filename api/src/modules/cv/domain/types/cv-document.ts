@@ -36,3 +36,19 @@ export type CvDocument = {
     issueDate: YearMonth | null;
   }[];
 };
+
+type WithOptionalId<T> = Omit<T, 'id'> & { id?: string };
+
+export type CvDocumentPatch = {
+  header?: CvDocument['header'];
+  summary?: string | null;
+  skills?: string[];
+  experience?: (Omit<
+    WithOptionalId<CvDocument['experience'][number]>,
+    'bullets'
+  > & {
+    bullets: { id?: string; text: string }[];
+  })[];
+  education?: WithOptionalId<CvDocument['education'][number]>[];
+  certifications?: WithOptionalId<CvDocument['certifications'][number]>[];
+};

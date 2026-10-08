@@ -5,3 +5,6 @@ export const MAX_QUESTIONS_PER_ROUND = 5;
 export const MAX_ANSWER_CHARS = 2_000;
 export const MAX_COMPOSE_REGENERATIONS = 3;
 export const MAX_BULLET_CHARS = 400;
+export const MAX_FIELD_CHARS = 200;
+export const MAX_SUMMARY_CHARS = 2_000;
+export const MAX_LIST_ITEMS = 50;
