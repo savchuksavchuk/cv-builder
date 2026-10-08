@@ -1,4 +1,4 @@
-import { Fact } from '../types/fact';
+import { Fact } from '../../types/fact';
 
 const squash = (text: string): string =>
   text.normalize('NFC').replace(/\s+/g, ' ').trim();

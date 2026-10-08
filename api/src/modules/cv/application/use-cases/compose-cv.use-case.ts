@@ -10,12 +10,12 @@ import { CV_REPOSITORY } from '../../domain/repositories/cv.repository';
 import type { CvRepository } from '../../domain/repositories/cv.repository';
 import { CvStatus } from '../../domain/types/cv-status';
 import { CvStep } from '../../domain/types/cv-step';
-import { buildDocument } from '../../domain/utils/build-document';
-import { composeCvOutput } from '../llm/compose-cv.output';
+import { buildDocument } from '../../domain/utils/document/build-document';
+import { composeCvOutput } from '../llm/compose-cv/compose-cv.output';
 import {
   COMPOSE_CV_SYSTEM,
   buildComposeCvPrompt,
-} from '../llm/compose-cv.prompt';
+} from '../llm/compose-cv/compose-cv.prompt';
 import { CV_JOBS_PORT } from '../ports/cv-jobs.port';
 import type { CvJobsPort } from '../ports/cv-jobs.port';
 

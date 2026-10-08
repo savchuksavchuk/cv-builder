@@ -3,13 +3,13 @@ import {
   Fact,
   FactSection,
   SECTION_FIELDS,
-} from '../types/fact';
+} from '../../types/fact';
 import {
   Question,
   QuestionStatus,
   QuestionTarget,
   pathOf,
-} from '../types/question';
+} from '../../types/question';
 import { entries } from './fact-entries';
 
 export function askableTargets(

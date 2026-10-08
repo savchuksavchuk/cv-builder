@@ -1,4 +1,4 @@
-import { Fact, MULTI_VALUE_FIELDS } from '../types/fact';
+import { Fact, MULTI_VALUE_FIELDS } from '../../types/fact';
 
 export function connectQuestionAnswersToFacts(
   facts: Fact[],

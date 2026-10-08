@@ -1,7 +1,7 @@
-import { MAX_BULLET_CHARS } from '../../domain/constants/cv-limits.constants';
-import { Cv } from '../../domain/entities/cv.entity';
-import { wrapUntrusted } from '../../domain/utils/untrusted';
-import { composeFactsForPrompt } from '../../domain/utils/compose-facts-for-prompt';
+import { MAX_BULLET_CHARS } from '../../../domain/constants/cv-limits.constants';
+import { Cv } from '../../../domain/entities/cv.entity';
+import { wrapUntrusted } from '../../../domain/utils/untrusted';
+import { composeFactsForPrompt } from '../../../domain/utils/facts/compose-facts-for-prompt';
 
 export const COMPOSE_CV_SYSTEM = `You are the writing stage of an AI CV builder. Earlier stages extracted and verified the facts about a candidate. You now compose the content of the candidate's CV for a specific target role. A strict fact-checker will review everything you write and will reject anything that is not supported by the facts.
 

@@ -15,12 +15,12 @@ import type { CvRepository } from '../../domain/repositories/cv.repository';
 import { CvStatus } from '../../domain/types/cv-status';
 import { CvStep } from '../../domain/types/cv-step';
 import { QuestionDraft } from '../../domain/types/question';
-import { askableTargets } from '../../domain/utils/askable-targets';
-import { generatedQuestionsOutput } from '../llm/generate-questions.output';
+import { askableTargets } from '../../domain/utils/facts/askable-targets';
+import { generatedQuestionsOutput } from '../llm/generate-questions/generate-questions.output';
 import {
   GENERATE_QUESTIONS_SYSTEM,
   buildGenerateQuestionsPrompt,
-} from '../llm/generate-questions.prompt';
+} from '../llm/generate-questions/generate-questions.prompt';
 import { CV_JOBS_PORT } from '../ports/cv-jobs.port';
 import type { CvJobsPort } from '../ports/cv-jobs.port';
 

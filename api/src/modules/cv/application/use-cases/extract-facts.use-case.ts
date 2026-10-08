@@ -11,10 +11,10 @@ import type { CvRepository } from '../../domain/repositories/cv.repository';
 import { CvStatus } from '../../domain/types/cv-status';
 import { CvStep } from '../../domain/types/cv-step';
 import { INITIAL_USER_INPUT_SOURCE } from '../../domain/types/fact';
-import { parseExtractedFacts } from '../../domain/utils/parse-extracted-facts';
+import { parseExtractedFacts } from '../../domain/utils/facts/parse-extracted-facts';
 import { wrapUntrusted } from '../../domain/utils/untrusted';
-import { EXTRACT_FACTS_SYSTEM } from '../llm/extract-facts.prompt';
-import { extractedFactsOutput } from '../llm/extracted-facts.output';
+import { EXTRACT_FACTS_SYSTEM } from '../llm/extract-facts/extract-facts.prompt';
+import { extractedFactsOutput } from '../llm/extract-facts/extract-facts.output';
 import { CV_JOBS_PORT } from '../ports/cv-jobs.port';
 import type { CvJobsPort } from '../ports/cv-jobs.port';
 

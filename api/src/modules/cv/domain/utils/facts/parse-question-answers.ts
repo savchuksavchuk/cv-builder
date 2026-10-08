@@ -1,5 +1,5 @@
-import { Fact } from '../types/fact';
-import { Question } from '../types/question';
+import { Fact } from '../../types/fact';
+import { Question } from '../../types/question';
 import { RawFact, parseExtractedFacts } from './parse-extracted-facts';
 
 export type AnswerRow = Omit<RawFact, 'section'> & { questionId: string };

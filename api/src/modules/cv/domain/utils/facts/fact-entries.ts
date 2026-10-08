@@ -1,4 +1,4 @@
-import { Fact, FactField, FactSection } from '../types/fact';
+import { Fact, FactField, FactSection } from '../../types/fact';
 
 export type Entry = { id: string; facts: Fact[] };
 

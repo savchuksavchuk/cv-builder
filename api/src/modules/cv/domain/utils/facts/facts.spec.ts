@@ -1,5 +1,5 @@
-import { FactField, FactSection } from '../types/fact';
-import { Question, QuestionStatus, pathOf } from '../types/question';
+import { FactField, FactSection } from '../../types/fact';
+import { Question, QuestionStatus, pathOf } from '../../types/question';
 import { askableTargets } from './askable-targets';
 import { connectQuestionAnswersToFacts } from './connect-question-answers-to-facts';
 import { entries, first } from './fact-entries';

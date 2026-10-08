@@ -11,17 +11,17 @@ import { CV_REPOSITORY } from '../../domain/repositories/cv.repository';
 import type { CvRepository } from '../../domain/repositories/cv.repository';
 import { CvStatus } from '../../domain/types/cv-status';
 import { CvStep } from '../../domain/types/cv-step';
-import { sourceValues } from '../../domain/utils/source-values';
+import { sourceValues } from '../../domain/utils/facts/source-values';
 import {
   Verdict,
   reviewDocument,
   sanitizeDocument,
-} from '../../domain/utils/review-document';
-import { validateResultOutput } from '../llm/validate-result.output';
+} from '../../domain/utils/document/review-document';
+import { validateResultOutput } from '../llm/validate-result/validate-result.output';
 import {
   VALIDATE_RESULT_SYSTEM,
   buildValidateResultPrompt,
-} from '../llm/validate-result.prompt';
+} from '../llm/validate-result/validate-result.prompt';
 import { CV_JOBS_PORT } from '../ports/cv-jobs.port';
 import type { CvJobsPort } from '../ports/cv-jobs.port';
 

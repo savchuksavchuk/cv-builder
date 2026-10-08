@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { FactField } from '../../domain/types/fact';
+import { FactField } from '../../../domain/types/fact';
 
 export const applyAnswersOutput = z.object({
   facts: z.array(

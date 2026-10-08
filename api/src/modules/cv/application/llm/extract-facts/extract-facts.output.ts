@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { FactField, FactSection } from '../../domain/types/fact';
+import { FactField, FactSection } from '../../../domain/types/fact';
 
 export const extractedFactsOutput = z.object({
   facts: z.array(

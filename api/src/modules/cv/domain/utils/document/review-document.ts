@@ -1,4 +1,4 @@
-import { CvDocument } from '../types/cv-document';
+import { CvDocument } from '../../types/cv-document';
 
 export type Verdict = {
   summarySupported: boolean;

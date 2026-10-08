@@ -7,7 +7,7 @@ import {
   INITIAL_USER_INPUT_SOURCE,
   MULTI_VALUE_FIELDS,
   SECTION_FIELDS,
-} from '../types/fact';
+} from '../../types/fact';
 
 export type RawFact = {
   section: FactSection;

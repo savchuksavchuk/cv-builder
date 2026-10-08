@@ -11,13 +11,13 @@ import type { CvRepository } from '../../domain/repositories/cv.repository';
 import { CvStatus } from '../../domain/types/cv-status';
 import { CvStep } from '../../domain/types/cv-step';
 import { Question, QuestionStatus } from '../../domain/types/question';
-import { connectQuestionAnswersToFacts } from '../../domain/utils/connect-question-answers-to-facts';
-import { parseQuestionAnswers } from '../../domain/utils/parse-question-answers';
-import { applyAnswersOutput } from '../llm/apply-answers.output';
+import { connectQuestionAnswersToFacts } from '../../domain/utils/facts/connect-question-answers-to-facts';
+import { parseQuestionAnswers } from '../../domain/utils/facts/parse-question-answers';
+import { applyAnswersOutput } from '../llm/apply-answers/apply-answers.output';
 import {
   APPLY_ANSWERS_SYSTEM,
   buildApplyAnswersPrompt,
-} from '../llm/apply-answers.prompt';
+} from '../llm/apply-answers/apply-answers.prompt';
 import { CV_JOBS_PORT } from '../ports/cv-jobs.port';
 import type { CvJobsPort } from '../ports/cv-jobs.port';
 

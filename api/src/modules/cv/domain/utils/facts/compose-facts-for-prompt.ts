@@ -3,7 +3,7 @@ import {
   FactSection,
   MULTI_VALUE_FIELDS,
   SECTION_FIELDS,
-} from '../types/fact';
+} from '../../types/fact';
 import { all, entries } from './fact-entries';
 
 export function composeFactsForPrompt(facts: Fact[]): string {

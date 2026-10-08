@@ -1,5 +1,5 @@
-import { Question, pathOf } from '../../domain/types/question';
-import { wrapUntrusted } from '../../domain/utils/untrusted';
+import { Question, pathOf } from '../../../domain/types/question';
+import { wrapUntrusted } from '../../../domain/utils/untrusted';
 
 export const APPLY_ANSWERS_SYSTEM = `You are a stage of an AI CV builder. Earlier stages extracted facts from a candidate's CV and found gaps. The candidate has now answered clarifying questions. Your job is to turn each answer into structured facts that fill the gap the question was about.
 

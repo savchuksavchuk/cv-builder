@@ -1,4 +1,4 @@
-import { Fact, FactField } from '../types/fact';
+import { Fact, FactField } from '../../types/fact';
 
 export function sourceValues(facts: Fact[]): Map<string, string> {
   const citable = [

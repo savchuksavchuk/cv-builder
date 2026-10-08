@@ -1,8 +1,8 @@
-import { MAX_QUESTIONS_PER_ROUND } from '../../domain/constants/cv-limits.constants';
-import { Cv } from '../../domain/entities/cv.entity';
-import { pathOf } from '../../domain/types/question';
-import { wrapUntrusted } from '../../domain/utils/untrusted';
-import { composeFactsForPrompt } from '../../domain/utils/compose-facts-for-prompt';
+import { MAX_QUESTIONS_PER_ROUND } from '../../../domain/constants/cv-limits.constants';
+import { Cv } from '../../../domain/entities/cv.entity';
+import { pathOf } from '../../../domain/types/question';
+import { wrapUntrusted } from '../../../domain/utils/untrusted';
+import { composeFactsForPrompt } from '../../../domain/utils/facts/compose-facts-for-prompt';
 
 export const GENERATE_QUESTIONS_SYSTEM = `You are a stage of an AI CV builder. Earlier stages extracted structured facts from a candidate's existing CV, and each fact was verified against the source text. A later stage will write a new CV for the candidate's target role, and it may only use facts that are present. It must never invent anything.
 
