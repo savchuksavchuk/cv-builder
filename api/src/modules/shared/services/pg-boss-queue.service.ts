@@ -5,7 +5,9 @@ import {
   OnModuleInit,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { PgBoss } from 'pg-boss';
+import { EntityManager } from '@mikro-orm/postgresql';
+import { CompiledQuery, type Transaction } from 'kysely';
+import { PgBoss, type Db } from 'pg-boss';
 import { Result, ResultBuilder } from '../../../common/classes/result.class';
 import { QueueJob, QueueOptions, QueueService } from './queue.service';
 
@@ -18,7 +20,10 @@ export class PgBossQueueService
 
   private readonly boss: PgBoss;
 
-  constructor(config: ConfigService) {
+  constructor(
+    config: ConfigService,
+    private readonly em: EntityManager,
+  ) {
     super();
     this.boss = new PgBoss({
       connectionString: config.getOrThrow<string>('DATABASE_URL'),
@@ -57,7 +62,10 @@ export class PgBossQueueService
     const builder = new ResultBuilder();
 
     try {
-      await this.boss.send(queue, data, key ? { singletonKey: key } : {});
+      await this.boss.send(queue, data, {
+        singletonKey: key,
+        db: this.currentTransaction(),
+      });
       return builder.setSuccess(true).build();
     } catch (error) {
       this.logger.error(`Failed to enqueue to ${queue}: ${String(error)}`);
@@ -66,6 +74,17 @@ export class PgBossQueueService
         .setMessage('Could not enqueue the job')
         .build();
     }
+  }
+
+  private currentTransaction(): Db | undefined {
+    const trx = this.em.getTransactionContext<Transaction<unknown>>();
+
+    return (
+      trx && {
+        executeSql: (text, values = []) =>
+          trx.executeQuery(CompiledQuery.raw(text, values)),
+      }
+    );
   }
 
   async process<T extends object>(
