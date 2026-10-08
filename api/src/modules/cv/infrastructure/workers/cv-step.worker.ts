@@ -73,7 +73,11 @@ export abstract class CvStepWorker implements OnApplicationBootstrap {
       return;
     }
 
+    const startedAt = Date.now();
     await this.run(cv);
+    this.logger.log(
+      `Step ${this.step} of cv ${cvId} done in ${Date.now() - startedAt}ms`,
+    );
   }
 
   private inContext<T>(fn: () => Promise<T>): Promise<T> {

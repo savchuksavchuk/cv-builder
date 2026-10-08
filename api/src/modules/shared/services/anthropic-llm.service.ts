@@ -22,6 +22,8 @@ export class AnthropicLlmService extends LlmService {
   ): Promise<Result<T>> {
     const builder = new ResultBuilder<T>();
 
+    const startedAt = Date.now();
+
     try {
       const { output, usage } = await generateText({
         model: this.anthropic(request.model),
@@ -32,7 +34,7 @@ export class AnthropicLlmService extends LlmService {
       });
 
       this.logger.log(
-        `${request.model} effort=${request.effort ?? 'default'} in=${usage.inputTokens} out=${usage.outputTokens} reasoning=${usage.outputTokenDetails.reasoningTokens ?? 0}`,
+        `${request.model} effort=${request.effort ?? 'default'} in=${usage.inputTokens} out=${usage.outputTokens} reasoning=${usage.outputTokenDetails.reasoningTokens ?? 0} time=${Date.now() - startedAt}ms`,
       );
 
       return builder.setSuccess(true).setDto(output).build();
