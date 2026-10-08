@@ -1,7 +1,7 @@
 import { Link } from 'react-router'
 import {
   CvStatus,
-  needsAttention,
+  CvStep,
   STATUS_LABELS,
   STEP_LABELS,
   type CvSummary,
@@ -17,7 +17,9 @@ const statusText = (cv: CvSummary) => {
 }
 
 export const CvCard = ({ cv }: { cv: CvSummary }) => {
-  const attention = needsAttention(cv)
+  const attention =
+    cv.status === CvStatus.Processing &&
+    cv.currentStep === CvStep.AnswerQuestions
 
   return (
     <Link

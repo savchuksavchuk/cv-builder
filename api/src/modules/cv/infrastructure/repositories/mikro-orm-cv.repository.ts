@@ -21,7 +21,6 @@ export class MikroOrmCvRepository implements CvRepository {
     return model ? cvSchema.toDomain(model) : null;
   }
 
-  // ponytail: loads full rows incl. document JSON, narrow `fields` if the list gets slow
   async listForUser(
     userId: string,
     { offset, limit }: { offset: number; limit: number },

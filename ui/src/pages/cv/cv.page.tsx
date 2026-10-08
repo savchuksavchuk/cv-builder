@@ -1,7 +1,8 @@
-import { useParams } from 'react-router'
+import { Navigate, useParams } from 'react-router'
+import { CvWizard } from '@/features/cv-wizard'
 
 export const CvPage = () => {
   const { id } = useParams()
 
-  return <h1 className="text-xl font-semibold">CV {id}</h1>
+  return id ? <CvWizard id={id} /> : <Navigate to="/" replace />
 }

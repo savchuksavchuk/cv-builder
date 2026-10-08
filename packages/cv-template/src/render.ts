@@ -24,6 +24,7 @@ const section = (title: string, body: string) =>
 const STYLES = `
 @page { size: A4; margin: 15mm; }
 * { box-sizing: border-box; }
+@media screen { body { padding: 15mm; } }
 body { margin: 0; font: 10.5pt/1.45 Helvetica, Arial, sans-serif; color: #111; }
 h1 { margin: 0; font-size: 22pt; }
 h2 { margin: 16px 0 6px; padding-bottom: 2px; border-bottom: 1px solid #999; font-size: 11pt; text-transform: uppercase; letter-spacing: .05em; }
