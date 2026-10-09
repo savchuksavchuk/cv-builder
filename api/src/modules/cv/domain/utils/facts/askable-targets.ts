@@ -66,8 +66,7 @@ export function askableTargets(
             target.entryId !== null &&
             touched.has(target.entryId)
           ) &&
-          (target.section === FactSection.Contacts ||
-            !skipped.has(target.entryId)),
+          !skipped.has(target.entryId),
       )
       .map((target) => [pathOf(target), target]),
   );

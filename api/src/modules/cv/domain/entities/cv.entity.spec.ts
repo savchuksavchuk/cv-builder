@@ -7,7 +7,12 @@ import { NEXT_STEP } from '../constants/cv-pipeline.constants';
 import { CvDocument } from '../types/cv-document';
 import { CvStatus } from '../types/cv-status';
 import { CvStep } from '../types/cv-step';
-import { FactField, FactSection } from '../types/fact';
+import {
+  Fact,
+  FactField,
+  FactSection,
+  INITIAL_USER_INPUT_SOURCE,
+} from '../types/fact';
 import { Question, QuestionDraft, QuestionStatus } from '../types/question';
 import { Cv } from './cv.entity';
 
@@ -35,6 +40,17 @@ function openQuestion(id: string): Question {
     answer: null,
     createdAt: '',
     updatedAt: '',
+  };
+}
+
+function companyFact(value: string, source: string): Fact {
+  return {
+    id: `${source}-${value}`,
+    section: FactSection.WorkExperience,
+    entryId: 'job-1',
+    field: FactField.Company,
+    value,
+    evidence: { source, quote: value },
   };
 }
 
@@ -236,6 +252,70 @@ describe('Cv', () => {
 
         expect(cv.verifyEvidence().success).toBe(false);
       }
+    });
+
+    describe('facts', () => {
+      function cvWithInputAndAnswers(): Cv {
+        const cv = cvAtStep(CvStep.VerifyEvidence);
+        cv.initialUserInput = 'I worked at Acme.';
+        cv.questions = [
+          {
+            ...openQuestion('q1'),
+            status: QuestionStatus.Answered,
+            answer: 'Then I joined Globex.',
+          },
+          { ...openQuestion('q2'), status: QuestionStatus.Dismissed },
+        ];
+        return cv;
+      }
+
+      it('keeps a fact quoted from the initial input and drops an invented one', () => {
+        const cv = cvWithInputAndAnswers();
+        const supported = companyFact('Acme', INITIAL_USER_INPUT_SOURCE);
+        const invented = companyFact('Initech', INITIAL_USER_INPUT_SOURCE);
+        cv.facts = [supported, invented];
+
+        cv.verifyEvidence();
+
+        expect(cv.facts).toEqual([supported]);
+      });
+
+      it('keeps a fact quoted from the answer it cites', () => {
+        const cv = cvWithInputAndAnswers();
+        const fromAnswer = companyFact('Globex', 'q1');
+        cv.facts = [fromAnswer];
+
+        cv.verifyEvidence();
+
+        expect(cv.facts).toEqual([fromAnswer]);
+      });
+
+      it('drops a fact that cites an answer but quotes the initial input', () => {
+        const cv = cvWithInputAndAnswers();
+        cv.facts = [companyFact('Acme', 'q1')];
+
+        cv.verifyEvidence();
+
+        expect(cv.facts).toEqual([]);
+      });
+
+      it('drops a fact that cites a dismissed question', () => {
+        const cv = cvWithInputAndAnswers();
+        cv.facts = [companyFact('Acme', 'q2')];
+
+        cv.verifyEvidence();
+
+        expect(cv.facts).toEqual([]);
+      });
+
+      it('drops a fact that cites an unknown source', () => {
+        const cv = cvWithInputAndAnswers();
+        cv.facts = [companyFact('Acme', 'unknown')];
+
+        cv.verifyEvidence();
+
+        expect(cv.facts).toEqual([]);
+      });
     });
   });
 
