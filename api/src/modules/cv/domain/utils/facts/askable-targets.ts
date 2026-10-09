@@ -17,6 +17,12 @@ export function askableTargets(
   questions: Question[],
 ): Map<string, QuestionTarget> {
   const asked = new Set(questions.map((q) => pathOf(q.target)));
+  const wholeEntry = new Set(
+    questions
+      .filter((q) => q.target.field === null)
+      .map((q) => q.target.entryId),
+  );
+  const touched = new Set(questions.map((q) => q.target.entryId));
   const skipped = new Set(
     questions
       .filter((q) => q.status === QuestionStatus.Dismissed)
@@ -39,6 +45,7 @@ export function askableTargets(
         : entries(facts, section).map((entry) => entry.id);
 
     for (const entryId of ids) {
+      targets.push({ section, entryId, field: null });
       for (const field of SECTION_FIELDS[section]) {
         targets.push({ section, entryId, field });
       }
@@ -50,6 +57,12 @@ export function askableTargets(
       .filter(
         (target) =>
           !asked.has(pathOf(target)) &&
+          !(target.field !== null && wholeEntry.has(target.entryId)) &&
+          !(
+            target.field === null &&
+            target.entryId !== null &&
+            touched.has(target.entryId)
+          ) &&
           (target.section === FactSection.Contacts ||
             !skipped.has(target.entryId)),
       )

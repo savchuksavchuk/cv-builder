@@ -77,15 +77,17 @@ export class GenerateQuestionsUseCase {
       throw new Error(generated.message);
     }
 
+    const entriesAsked = new Set<string | null>();
+
     return generated.dto.questions
       .flatMap(({ path, question }) => {
         const target = targets.get(path);
         const text = question.trim();
 
-        if (!target || !text) {
+        if (!target || !text || entriesAsked.has(target.entryId)) {
           return [];
         }
-        targets.delete(path);
+        entriesAsked.add(target.entryId);
 
         return [{ target, question: text }];
       })

@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Expose, Transform, Type, plainToInstance } from 'class-transformer';
+import { Expose, Type, plainToInstance } from 'class-transformer';
 import { CvSnapshot } from '../../domain/entities/cv.entity';
 import { CvDocument } from '../../domain/types/cv-document';
 import { CvStatus } from '../../domain/types/cv-status';

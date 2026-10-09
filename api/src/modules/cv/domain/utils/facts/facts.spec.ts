@@ -155,6 +155,28 @@ describe('parseQuestionAnswers / connectQuestionAnswersToFacts', () => {
     expect(jobs).toHaveLength(3);
     expect(first(jobs[2], FactField.Title)).toBe('CTO');
   });
+
+  it('accepts several fields of one entry for an entry-level question', () => {
+    const whole = question({
+      section: FactSection.WorkExperience,
+      entryId: job.id,
+      field: null,
+    });
+    const merged = connectQuestionAnswersToFacts(
+      facts,
+      parseQuestionAnswers(
+        [whole],
+        [
+          out(whole, FactField.Title, 'CTO'),
+          out(whole, FactField.StartDate, '2020-01'),
+        ],
+      ),
+    );
+    const updated = entries(merged, FactSection.WorkExperience)[1];
+
+    expect(first(updated, FactField.Title)).toBe('CTO');
+    expect(first(updated, FactField.StartDate)).toBe('2020-01');
+  });
 });
 
 describe('askableTargets', () => {
@@ -171,6 +193,28 @@ describe('askableTargets', () => {
   it('asks for missing jobs only when there are none', () => {
     expect(askableTargets([], []).has('work_experience')).toBe(true);
     expect(askableTargets(facts, []).has('work_experience')).toBe(false);
+  });
+
+  it('offers a whole-entry path and drops its fields once it is asked', () => {
+    const before = askableTargets([degree], []);
+    expect(before.has(`education.${degree.entryId}`)).toBe(true);
+
+    const after = askableTargets(
+      [degree],
+      [
+        question(
+          {
+            section: FactSection.Education,
+            entryId: degree.entryId,
+            field: null,
+          },
+          QuestionStatus.Open,
+        ),
+      ],
+    );
+    expect([...after.keys()].some((k) => k.startsWith('education.'))).toBe(
+      false,
+    );
   });
 
   it('drops asked paths and whole skipped entries', () => {

@@ -14,6 +14,7 @@ For each question you get: questionId, path (what the question is about), the qu
 ## Fact format
 Every fact has: questionId, entry, field, value, quote.
 - "field" is the last segment of the question's path (work_experience.<id>.title → title). For list fields (responsibility, achievement, skill, link) return one fact per item, one idea per fact.
+- If the path ends with an entry id or is just "contacts" (a whole entry, no field), the question asked for several fields of that entry. Return a fact for each field the answer states, using fields of that entry's section; "entry" is 0.
 - For the path "work_experience" (no id) the candidate describes jobs that were missing entirely. Return facts for company, title, location, start_date, end_date, responsibility, achievement and skill, and give all facts of the same job the same "entry" (0-based, in the order of the answer). For every other path "entry" is 0.
 
 ## Rules
@@ -77,6 +78,22 @@ answer: A few years ago, I don't remember exactly.
 
 <correct_output>
 (no facts: the answer gives no date)
+</correct_output>
+
+</example>
+
+<example>
+
+<input>
+questionId: q4
+path: education.edu-1
+question: At which institution and in which month and year did you get your BSc?
+answer: Lakeside University, finished in June 2016.
+</input>
+
+<correct_output>
+{"questionId":"q4","entry":0,"field":"institution","value":"Lakeside University","quote":"Lakeside University"}
+{"questionId":"q4","entry":0,"field":"end_date","value":"2016-06","quote":"June 2016"}
 </correct_output>
 
 </example>

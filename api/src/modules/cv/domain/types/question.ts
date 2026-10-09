@@ -8,7 +8,7 @@ export enum QuestionStatus {
 }
 
 export type QuestionTarget =
-  | { section: FactSection; entryId: string; field: FactField }
+  | { section: FactSection; entryId: string; field: FactField | null }
   | { section: FactSection.WorkExperience; entryId: null; field: null };
 
 export function pathOf(target: QuestionTarget): string {
