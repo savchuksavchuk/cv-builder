@@ -7,8 +7,8 @@ import {
   FakeCvJobs,
   InMemoryCvRepository,
 } from '../../src/modules/cv/testing/cv-fakes.testing';
-import type { TransactionService } from '../../src/modules/shared/services/transaction.service';
 import type { Candidate } from '../datasets/candidates';
+import { runWithoutTransaction } from './no-transaction';
 import { productLlm } from './product-llm';
 
 function cvWaitingForComposition(candidate: Candidate): Cv {
@@ -21,10 +21,6 @@ function cvWaitingForComposition(candidate: Candidate): Cv {
 }
 
 function realComposeStep(): ComposeCvUseCase {
-  const runWithoutTransaction = {
-    run: (work: () => Promise<void>) => work(),
-  } as unknown as TransactionService;
-
   return new ComposeCvUseCase(
     new InMemoryCvRepository(),
     new FakeCvJobs(),
