@@ -104,10 +104,10 @@ export class Cv {
   setExtractingFileStep(): Result<CvStep> {
     const builder = new ResultBuilder<CvStep>();
 
-    if (this.status !== CvStatus.Processing) {
+    if (this.status !== CvStatus.Processing || this.currentStep !== null) {
       return builder
         .setSuccess(false)
-        .setMessage(`CV is ${this.status}, expected ${CvStatus.Processing}`)
+        .setMessage(`CV is not ready to start generation`)
         .build();
     }
 
@@ -124,10 +124,10 @@ export class Cv {
   setExtractingFactsStep(): Result<CvStep> {
     const builder = new ResultBuilder<CvStep>();
 
-    if (this.status !== CvStatus.Processing) {
+    if (this.status !== CvStatus.Processing || this.currentStep !== null) {
       return builder
         .setSuccess(false)
-        .setMessage(`CV is ${this.status}, expected ${CvStatus.Processing}`)
+        .setMessage(`CV is not ready to start generation`)
         .build();
     }
 
@@ -157,12 +157,15 @@ export class Cv {
 
     const next = NEXT_STEP[step];
 
-    if (next) {
-      this.currentStep = next;
-    } else {
-      this.status = CvStatus.Completed;
-      this.currentStep = null;
+    // Completion is only possible through applyReview.
+    if (!next) {
+      return builder
+        .setSuccess(false)
+        .setMessage(`Step ${step} cannot be finished directly`)
+        .build();
     }
+
+    this.currentStep = next;
     this.touch();
 
     return builder.setSuccess(true).build();
@@ -373,6 +376,16 @@ export class Cv {
 
   applyPdfText(pdfText: string): Result {
     const builder = new ResultBuilder();
+
+    if (
+      this.status !== CvStatus.Processing ||
+      this.currentStep !== CvStep.ParsePdf
+    ) {
+      return builder
+        .setSuccess(false)
+        .setMessage(`CV is not processing step ${CvStep.ParsePdf}`)
+        .build();
+    }
 
     const text = normalizeText(
       [pdfText, this.initialUserInput].filter(Boolean).join('\n\n'),
