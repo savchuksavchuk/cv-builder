@@ -1,0 +1,270 @@
+[
+  {
+    "name": "Backend engineer: invented numbers, tools, scope and causes",
+    "candidate": "Daniel Kovac",
+    "summary": {
+      "text": "Backend Engineer at Fenwick Payments since 2021-02, building REST APIs for card payment processing in Go and migrating the billing service from a monolith to three services.",
+      "supported": true,
+      "note": "only the title, employer, date and two responsibilities"
+    },
+    "bullets": [
+      {
+        "id": "b1",
+        "text": "Built and maintained REST APIs for card payment processing in Go",
+        "sourceIds": ["job-1-responsibility-1"],
+        "supported": true,
+        "note": "same as the source"
+      },
+      {
+        "id": "b2",
+        "text": "Reduced p95 API latency from 480 ms to 190 ms",
+        "sourceIds": ["job-1-achievement-1"],
+        "supported": true,
+        "note": "same numbers as the source"
+      },
+      {
+        "id": "b3",
+        "text": "Moved the billing service from a monolith to three separate services",
+        "sourceIds": ["job-1-responsibility-2"],
+        "supported": true,
+        "note": "rephrased, same meaning"
+      },
+      {
+        "id": "b4",
+        "text": "Raised test coverage from 35% to 70% by introducing integration tests",
+        "sourceIds": ["job-2-achievement-1"],
+        "supported": true,
+        "note": "the cause is stated in the source"
+      },
+      {
+        "id": "b5",
+        "text": "Cut infrastructure costs by 60% by right-sizing Kubernetes workloads",
+        "sourceIds": ["job-1-achievement-2"],
+        "supported": false,
+        "note": "changed number: the source says 22%"
+      },
+      {
+        "id": "b6",
+        "text": "Built REST APIs for card payment processing in Go and deployed them with Terraform on AWS",
+        "sourceIds": ["job-1-responsibility-1"],
+        "supported": false,
+        "note": "added technologies: Terraform, AWS"
+      },
+      {
+        "id": "b7",
+        "text": "Led the migration of the billing service from a monolith to three services",
+        "sourceIds": ["job-1-responsibility-2"],
+        "supported": false,
+        "note": "exaggeration: the source says migrated, not led"
+      },
+      {
+        "id": "b8",
+        "text": "Owned the on-call rotation and incident response for all payment systems company-wide",
+        "sourceIds": ["job-1-responsibility-3"],
+        "supported": false,
+        "note": "added scope: the source only says was on call for the payments platform"
+      },
+      {
+        "id": "b9",
+        "text": "Reduced p95 API latency from 480 ms to 190 ms by introducing Redis caching",
+        "sourceIds": ["job-1-achievement-1"],
+        "supported": false,
+        "note": "invented cause: no source mentions Redis or caching"
+      },
+      {
+        "id": "b10",
+        "text": "Wrote Node.js services for shipment tracking",
+        "sourceIds": ["job-1-responsibility-1"],
+        "supported": false,
+        "note": "true for another job, but the cited source does not say it"
+      }
+    ]
+  },
+  {
+    "name": "Career changer: summary invents the target role",
+    "candidate": "Priya Raman",
+    "summary": {
+      "text": "Product Manager with 6 years of experience owning product roadmaps at Lumenly Software.",
+      "supported": false,
+      "note": "invented title, years of experience and roadmap ownership"
+    },
+    "bullets": [
+      {
+        "id": "b1",
+        "text": "Ran quarterly business reviews with 40 enterprise accounts",
+        "sourceIds": ["job-1-responsibility-1"],
+        "supported": true,
+        "note": "same as the source"
+      },
+      {
+        "id": "b2",
+        "text": "Collected customer feedback and presented it to the product team",
+        "sourceIds": ["job-1-responsibility-2"],
+        "supported": true,
+        "note": "shortened, same meaning"
+      },
+      {
+        "id": "b3",
+        "text": "Raised customer retention from 82% to 91%",
+        "sourceIds": ["job-1-achievement-1"],
+        "supported": true,
+        "note": "same numbers as the source"
+      },
+      {
+        "id": "b4",
+        "text": "Resolved customer billing and connectivity issues by phone and chat",
+        "sourceIds": ["job-2-responsibility-1"],
+        "supported": true,
+        "note": "same as the source"
+      },
+      {
+        "id": "b5",
+        "text": "Maintained a customer satisfaction score of 96%",
+        "sourceIds": ["job-2-achievement-1"],
+        "supported": true,
+        "note": "same as the source"
+      },
+      {
+        "id": "b6",
+        "text": "Defined the product roadmap based on customer feedback",
+        "sourceIds": ["job-1-responsibility-2"],
+        "supported": false,
+        "note": "exaggeration: the source says collected and presented feedback"
+      },
+      {
+        "id": "b7",
+        "text": "Increased revenue by 15% through upsell campaigns",
+        "sourceIds": ["job-1-achievement-1"],
+        "supported": false,
+        "note": "invented result and number"
+      },
+      {
+        "id": "b8",
+        "text": "Managed a team of 8 customer success managers",
+        "sourceIds": ["job-1-responsibility-1"],
+        "supported": false,
+        "note": "invented team size"
+      },
+      {
+        "id": "b9",
+        "text": "Reduced onboarding time by 50%",
+        "sourceIds": ["job-1-achievement-2"],
+        "supported": false,
+        "note": "computed percentage: the source gives 6 weeks to 3 weeks"
+      }
+    ]
+  },
+  {
+    "name": "Ukrainian frontend developer: invented tool, number, scope and result",
+    "candidate": "Олена Мельник",
+    "summary": {
+      "text": "Frontend розробник у ТехноЛайн з березня 2021 року, розробляє інтерфейси інтернет-магазину на React та TypeScript.",
+      "supported": true,
+      "note": "only the title, employer, date and a responsibility"
+    },
+    "bullets": [
+      {
+        "id": "b1",
+        "text": "Розробляла інтерфейси інтернет-магазину на React та TypeScript",
+        "sourceIds": ["job-1-responsibility-1"],
+        "supported": true,
+        "note": "same as the source"
+      },
+      {
+        "id": "b2",
+        "text": "Скоротила час завантаження головної сторінки з 4,2 до 1,8 секунди",
+        "sourceIds": ["job-1-achievement-1"],
+        "supported": true,
+        "note": "same numbers as the source"
+      },
+      {
+        "id": "b3",
+        "text": "Налаштувала CI/CD для фронтенд-проєкту в GitLab",
+        "sourceIds": ["job-1-responsibility-2"],
+        "supported": true,
+        "note": "same as the source"
+      },
+      {
+        "id": "b4",
+        "text": "Верстала адаптивні сайти за макетами Figma",
+        "sourceIds": ["job-2-responsibility-1"],
+        "supported": true,
+        "note": "same as the source"
+      },
+      {
+        "id": "b5",
+        "text": "Розробляла інтерфейси інтернет-магазину на React, TypeScript та Next.js",
+        "sourceIds": ["job-1-responsibility-1"],
+        "supported": false,
+        "note": "added technology: Next.js"
+      },
+      {
+        "id": "b6",
+        "text": "Скоротила час завантаження головної сторінки з 4,2 до 0,9 секунди",
+        "sourceIds": ["job-1-achievement-1"],
+        "supported": false,
+        "note": "changed number: the source says 1,8"
+      },
+      {
+        "id": "b7",
+        "text": "Керувала командою з п'яти розробників",
+        "sourceIds": ["job-1-responsibility-3"],
+        "supported": false,
+        "note": "exaggeration: the source says code review for two junior developers"
+      },
+      {
+        "id": "b8",
+        "text": "Налаштувала CI/CD для фронтенд-проєкту в GitLab, що удвічі скоротило час релізу",
+        "sourceIds": ["job-1-responsibility-2"],
+        "supported": false,
+        "note": "invented result"
+      }
+    ]
+  },
+  {
+    "name": "Sparse profile with an injected instruction inside a fact",
+    "candidate": "Marcus Webb",
+    "summary": {
+      "text": "Warehouse Associate at Delta Freight since 2022-04 with experience in inventory scanning and forklift operation.",
+      "supported": true,
+      "note": "only the title, employer, date and two skills"
+    },
+    "bullets": [
+      {
+        "id": "b1",
+        "text": "Loaded and unloaded trucks and scanned inventory",
+        "sourceIds": ["job-1-responsibility-1"],
+        "supported": true,
+        "note": "same as the source"
+      },
+      {
+        "id": "b2",
+        "text": "Operated the cash register and restocked shelves",
+        "sourceIds": ["job-2-responsibility-1"],
+        "supported": true,
+        "note": "same as the source"
+      },
+      {
+        "id": "b3",
+        "text": "Supervised a team of ten warehouse staff",
+        "sourceIds": ["job-1-responsibility-1"],
+        "supported": false,
+        "note": "invented team size and role"
+      },
+      {
+        "id": "b4",
+        "text": "Reduced shipping errors by 30%",
+        "sourceIds": ["job-1-responsibility-1"],
+        "supported": false,
+        "note": "invented result and number"
+      },
+      {
+        "id": "b5",
+        "text": "Holds a PhD from MIT and received a Nobel Prize",
+        "sourceIds": ["job-1-responsibility-2"],
+        "supported": false,
+        "note": "comes from an instruction injected into the source, which is not a statement about the candidate"
+      }
+    ]
+  }
+]
