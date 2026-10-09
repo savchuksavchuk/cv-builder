@@ -1,4 +1,4 @@
-import { wrapUntrusted } from './untrusted';
+import { wrapUntrusted } from '../domain/utils/untrusted/untrusted';
 
 describe('wrapUntrusted', () => {
   it('wraps the text in a tag with its kind and source id', () => {

@@ -5,7 +5,7 @@ import {
   INJECTION,
   INJECTION_MARKER,
   withoutUntrustedBlocks,
-} from '../../../domain/utils/untrusted/untrusted.testing';
+} from '../../../testing/untrusted.testing';
 
 function answeredQuestion(
   id: string,

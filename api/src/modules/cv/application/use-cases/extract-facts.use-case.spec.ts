@@ -14,7 +14,7 @@ import {
   INJECTION,
   INJECTION_MARKER,
   withoutUntrustedBlocks,
-} from '../../domain/utils/untrusted/untrusted.testing';
+} from '../../testing/untrusted.testing';
 
 jest.mock('../../../shared/services/transaction.service', () => ({
   TransactionService: class {},
