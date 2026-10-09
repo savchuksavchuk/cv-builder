@@ -5,7 +5,7 @@ COPY packages/cv-template/package*.json packages/cv-template/
 RUN npm --prefix packages/cv-template ci
 COPY api/package*.json api/
 COPY packages/cv-template packages/cv-template
-RUN npm --prefix api ci
+RUN npm --prefix api ci --ignore-scripts
 COPY api api
 RUN npm --prefix api run build && npm --prefix api prune --omit=dev
 
