@@ -1,7 +1,7 @@
 import { MAX_QUESTIONS_PER_ROUND } from '../../../domain/constants/cv-limits.constants';
 import { Cv } from '../../../domain/entities/cv.entity';
 import { Question, pathOf } from '../../../domain/types/question';
-import { wrapUntrusted } from '../../../domain/utils/untrusted';
+import { wrapUntrusted } from '../../../domain/utils/untrusted/untrusted';
 import { composeFactsForPrompt } from '../../../domain/utils/facts/compose-facts-for-prompt';
 import { EXAMPLES_NOTE, UNTRUSTED_INPUT_RULE } from '../prompt-parts';
 
@@ -84,7 +84,7 @@ export function buildGenerateQuestionsPrompt(cv: Cv, paths: string[]): string {
 }
 
 function askedLine(q: Question): string {
-  const line = `- [${q.status}] ${pathOf(q.target)}: "${q.question}"`;
+  const line = `- [${q.status}] ${pathOf(q.target)}: ${wrapUntrusted('question', q.id, q.question)}`;
 
   return q.answer
     ? `${line}\n  answer: ${wrapUntrusted('answer', q.id, q.answer)}`

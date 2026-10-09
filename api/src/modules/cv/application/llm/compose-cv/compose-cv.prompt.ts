@@ -1,6 +1,6 @@
 import { MAX_BULLET_CHARS } from '../../../domain/constants/cv-limits.constants';
 import { Cv } from '../../../domain/entities/cv.entity';
-import { wrapUntrusted } from '../../../domain/utils/untrusted';
+import { wrapUntrusted } from '../../../domain/utils/untrusted/untrusted';
 import { composeFactsForPrompt } from '../../../domain/utils/facts/compose-facts-for-prompt';
 import { EXAMPLES_NOTE, UNTRUSTED_INPUT_RULE } from '../prompt-parts';
 

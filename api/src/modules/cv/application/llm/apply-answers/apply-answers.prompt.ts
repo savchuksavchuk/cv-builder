@@ -1,5 +1,5 @@
 import { Question, pathOf } from '../../../domain/types/question';
-import { wrapUntrusted } from '../../../domain/utils/untrusted';
+import { wrapUntrusted } from '../../../domain/utils/untrusted/untrusted';
 import { EXAMPLES_NOTE, UNTRUSTED_INPUT_RULE } from '../prompt-parts';
 
 export const APPLY_ANSWERS_SYSTEM = `You are a stage of an AI CV builder. Earlier stages extracted facts from a candidate's CV and found gaps. The candidate has now answered clarifying questions. Turn each answer into structured facts that fill the gap its question was about.
@@ -104,7 +104,7 @@ export function buildApplyAnswersPrompt(questions: Question[]): string {
   return questions
     .map(
       (q) =>
-        `questionId: ${q.id}\npath: ${pathOf(q.target)}\nquestion: ${q.question}\nanswer: ${wrapUntrusted('answer', q.id, q.answer ?? '')}`,
+        `questionId: ${q.id}\npath: ${pathOf(q.target)}\nquestion: ${wrapUntrusted('question', q.id, q.question)}\nanswer: ${wrapUntrusted('answer', q.id, q.answer ?? '')}`,
     )
     .join('\n\n');
 }

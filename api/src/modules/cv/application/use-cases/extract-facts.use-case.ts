@@ -12,7 +12,7 @@ import { CvStatus } from '../../domain/types/cv-status';
 import { CvStep } from '../../domain/types/cv-step';
 import { INITIAL_USER_INPUT_SOURCE } from '../../domain/types/fact';
 import { parseExtractedFacts } from '../../domain/utils/facts/parse-extracted-facts';
-import { wrapUntrusted } from '../../domain/utils/untrusted';
+import { wrapUntrusted } from '../../domain/utils/untrusted/untrusted';
 import { EXTRACT_FACTS_SYSTEM } from '../llm/extract-facts/extract-facts.prompt';
 import { extractedFactsOutput } from '../llm/extract-facts/extract-facts.output';
 import { CV_JOBS_PORT } from '../ports/cv-jobs.port';

@@ -2,7 +2,7 @@ import { CvDocument } from '../../../domain/types/cv-document';
 import { Fact } from '../../../domain/types/fact';
 import { composeFactsForPrompt } from '../../../domain/utils/facts/compose-facts-for-prompt';
 import { sourceValues } from '../../../domain/utils/facts/source-values';
-import { wrapUntrusted } from '../../../domain/utils/untrusted';
+import { wrapUntrusted } from '../../../domain/utils/untrusted/untrusted';
 import { EXAMPLES_NOTE, UNTRUSTED_INPUT_RULE } from '../prompt-parts';
 
 export const VALIDATE_RESULT_SYSTEM = `You are a strict fact-checker, the last stage of an AI CV builder. A writer produced CV bullets and a summary from verified facts about a candidate. Catch anything the facts do not support, because a CV with an invented claim damages the candidate. Return a verdict for the summary and for every bullet.

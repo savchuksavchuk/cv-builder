@@ -7,7 +7,7 @@ export type Untrusted<T extends string = string> = T & {
 export type WrappedUntrusted = Untrusted & { readonly wrapped: true };
 
 export function wrapUntrusted(
-  kind: 'document' | 'answer' | 'target_role',
+  kind: 'document' | 'question' | 'answer' | 'target_role',
   sourceId: string,
   text: string,
 ): WrappedUntrusted {
