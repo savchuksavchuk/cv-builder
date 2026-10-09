@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { CvApi, CvStatus, CvStep, CVS_QUERY_KEY } from '@/entities/cv'
 
-const POLL_INTERVAL_MS = 2500
+const POLL_INTERVAL_MS = 1000
 
 export const useCv = (id: string) => {
   const { data, isPending, error } = useQuery({
