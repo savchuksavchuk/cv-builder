@@ -1,0 +1,35 @@
+[
+  {
+    "name": "Missing email and start date",
+    "candidate": "Daniel Kovac",
+    "dropFactIds": ["contacts-email", "job-1-start_date-1"],
+    "mustAsk": ["contacts.email", "work_experience.job-1.start_date"],
+    "mustNotAsk": [
+      "contacts.full_name",
+      "work_experience.job-2",
+      "education.edu-1"
+    ]
+  },
+  {
+    "name": "Missing job dates",
+    "candidate": "Priya Raman",
+    "dropFactIds": ["job-1-start_date-1", "job-1-end_date-1"],
+    "mustAsk": ["work_experience.job-1.start_date"],
+    "mustNotAsk": [
+      "contacts.email",
+      "work_experience.job-2.title",
+      "education.edu-1"
+    ]
+  },
+  {
+    "name": "Missing email, Ukrainian candidate",
+    "candidate": "Олена Мельник",
+    "dropFactIds": ["contacts-email"],
+    "mustAsk": ["contacts.email"],
+    "mustNotAsk": [
+      "contacts.full_name",
+      "work_experience.job-1.company",
+      "education.edu-1"
+    ]
+  }
+]

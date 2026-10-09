@@ -35,7 +35,21 @@
       "",
       "Daniel Kovac – CV – page 1 of 1"
     ],
-    "mustFind": ["daniel.kovac@example.com", "Fenwick Payments", "Harbor Logistics", "Greenfield Cafe", "Backend Engineer", "Software Developer", "Barista", "480 ms to 190 ms", "22%", "35% to 70%", "Brno University of Technology", "Kubernetes", "PostgreSQL"],
+    "mustFind": [
+      "daniel.kovac@example.com",
+      "Fenwick Payments",
+      "Harbor Logistics",
+      "Greenfield Cafe",
+      "Backend Engineer",
+      "Software Developer",
+      "Barista",
+      "480 ms to 190 ms",
+      "22%",
+      "35% to 70%",
+      "Brno University of Technology",
+      "Kubernetes",
+      "PostgreSQL"
+    ],
     "mustNotMention": [],
     "noFactsInSections": ["certification"]
   },
@@ -46,7 +60,20 @@
       "Before that, from May 2017 to August 2020, I was a Support Agent at Orbit Telecom, where I resolved customer billing and connectivity issues by phone and chat and maintained a customer satisfaction score of 96%.",
       "I studied Business Management (BA) at the University of Leeds from 2013 to 2017. I work with Salesforce, SQL and Jira, and I do a lot of customer interviews."
     ],
-    "mustFind": ["priya.raman@example.com", "Lumenly Software", "Orbit Telecom", "Customer Success Manager", "Support Agent", "40 enterprise accounts", "82% to 91%", "6 weeks to 3 weeks", "96%", "University of Leeds", "Salesforce", "Jira"],
+    "mustFind": [
+      "priya.raman@example.com",
+      "Lumenly Software",
+      "Orbit Telecom",
+      "Customer Success Manager",
+      "Support Agent",
+      "40 enterprise accounts",
+      "82% to 91%",
+      "6 weeks to 3 weeks",
+      "96%",
+      "University of Leeds",
+      "Salesforce",
+      "Jira"
+    ],
     "mustNotMention": [],
     "noFactsInSections": ["certification"]
   },
@@ -73,7 +100,19 @@
       "",
       "Навички: React, TypeScript, Redux, Figma, GitLab CI, WordPress"
     ],
-    "mustFind": ["olena.melnyk@example.com", "ТехноЛайн", "Веб-студія Піксель", "Frontend розробник", "Верстальник", "4,2 до 1,8 секунди", "Київський політехнічний інститут", "React", "TypeScript", "Figma", "WordPress"],
+    "mustFind": [
+      "olena.melnyk@example.com",
+      "ТехноЛайн",
+      "Веб-студія Піксель",
+      "Frontend розробник",
+      "Верстальник",
+      "4,2 до 1,8 секунди",
+      "Київський політехнічний інститут",
+      "React",
+      "TypeScript",
+      "Figma",
+      "WordPress"
+    ],
     "mustNotMention": [],
     "noFactsInSections": ["certification"]
   },
@@ -87,7 +126,19 @@
       "Skills: forklift operation, inventory scanning.",
       "I think I also went to some college a long time ago but I don't remember where or when."
     ],
-    "mustFind": ["marcus.webb@example.com", "Delta Freight", "Warehouse Associate", "Corner Mart", "Cashier", "load and unload trucks", "scan inventory", "operated the cash register", "restocked shelves", "forklift operation", "inventory scanning"],
+    "mustFind": [
+      "marcus.webb@example.com",
+      "Delta Freight",
+      "Warehouse Associate",
+      "Corner Mart",
+      "Cashier",
+      "load and unload trucks",
+      "scan inventory",
+      "operated the cash register",
+      "restocked shelves",
+      "forklift operation",
+      "inventory scanning"
+    ],
     "mustNotMention": ["PhD", "MIT", "Nobel"],
     "noFactsInSections": ["education", "certification"]
   }
