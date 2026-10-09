@@ -1,4 +1,6 @@
 import { CvDocument } from '../../types/cv-document';
+import { Fact } from '../../types/fact';
+import { sourceValues } from '../facts/source-values';
 
 export type Verdict = {
   summarySupported: boolean;
@@ -7,27 +9,40 @@ export type Verdict = {
 };
 
 export type Review = {
-  rejectedBullets: Map<string, string>;
-  summaryRejected: boolean;
+  // Empty when the judge supports everything.
   feedback: string[];
+  // The document with rejected parts removed or replaced by the raw fact.
+  safeDocument: CvDocument;
 };
 
-export function reviewDocument(document: CvDocument, verdict: Verdict): Review {
-  const byId = new Map(verdict.bullets.map((b) => [b.id, b]));
-  const rejectedBullets = new Map<string, string>();
+export function reviewDocument(
+  document: CvDocument,
+  verdict: Verdict,
+  facts: Fact[],
+): Review {
+  const values = sourceValues(facts);
+  const verdicts = new Map(verdict.bullets.map((b) => [b.id, b]));
   const feedback: string[] = [];
 
-  for (const job of document.experience) {
-    for (const bullet of job.bullets) {
-      const result = byId.get(bullet.id);
+  const experience = document.experience.map((job) => ({
+    ...job,
+    bullets: job.bullets.flatMap((bullet) => {
+      const result = verdicts.get(bullet.id);
 
-      if (!result?.supported) {
-        const reason = result?.reason || 'no verdict from the judge';
-        rejectedBullets.set(bullet.id, reason);
-        feedback.push(`Bullet "${bullet.text}" was rejected: ${reason}`);
+      if (result?.supported) {
+        return [bullet];
       }
-    }
-  }
+
+      const reason = result?.reason || 'no verdict from the judge';
+      feedback.push(`Bullet "${bullet.text}" was rejected: ${reason}`);
+
+      const source = bullet.sourceIds
+        .map((id) => values.get(id))
+        .find((value) => !!value);
+
+      return source ? [{ ...bullet, text: source }] : [];
+    }),
+  }));
 
   const summaryRejected = !!document.summary && !verdict.summarySupported;
 
@@ -37,30 +52,12 @@ export function reviewDocument(document: CvDocument, verdict: Verdict): Review {
     );
   }
 
-  return { rejectedBullets, summaryRejected, feedback };
-}
-
-export function sanitizeDocument(
-  document: CvDocument,
-  review: Review,
-  values: Map<string, string>,
-): CvDocument {
   return {
-    ...document,
-    summary: review.summaryRejected ? null : document.summary,
-    experience: document.experience.map((job) => ({
-      ...job,
-      bullets: job.bullets.flatMap((bullet) => {
-        if (!review.rejectedBullets.has(bullet.id)) {
-          return [bullet];
-        }
-
-        const source = bullet.sourceIds
-          .map((id) => values.get(id))
-          .find((value) => !!value);
-
-        return source ? [{ ...bullet, text: source }] : [];
-      }),
-    })),
+    feedback,
+    safeDocument: {
+      ...document,
+      summary: summaryRejected ? null : document.summary,
+      experience,
+    },
   };
 }

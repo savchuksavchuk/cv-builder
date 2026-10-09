@@ -66,6 +66,44 @@ describe('verifyFacts', () => {
       'Jane Doe',
     ]);
   });
+
+  const verify = (
+    field: FactField,
+    value: string,
+    quote: string,
+    section = FactSection.WorkExperience,
+  ) =>
+    verifyFacts(
+      parseExtractedFacts([raw(section, 0, field, value, quote)], 'src'),
+      () => 'Senior  Dev at Acme. Cut latency by 40%.',
+    );
+
+  it('drops a verbatim field whose value is not contained in its quote', () => {
+    expect(verify(FactField.Title, 'Senior Dev', 'Dev')).toHaveLength(0);
+    expect(verify(FactField.Title, 'senior dev', 'Senior  Dev')).toHaveLength(
+      1,
+    );
+  });
+
+  it('drops a description that adds words or numbers to its quote', () => {
+    const quote = 'Cut latency';
+
+    expect(
+      verify(FactField.Achievement, 'Cut latency by 40%', quote),
+    ).toHaveLength(0);
+    expect(
+      verify(FactField.Responsibility, 'Reduced latency', quote),
+    ).toHaveLength(0);
+    expect(
+      verify(FactField.Achievement, 'latency by 40%', 'Cut latency by 40%'),
+    ).toHaveLength(1);
+  });
+
+  it('does not compare normalized dates with their quote', () => {
+    expect(verify(FactField.StartDate, '2020-01', 'Senior  Dev')).toHaveLength(
+      1,
+    );
+  });
 });
 
 describe('parseQuestionAnswers / connectQuestionAnswersToFacts', () => {

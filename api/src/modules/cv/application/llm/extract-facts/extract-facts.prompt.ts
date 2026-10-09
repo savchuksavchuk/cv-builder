@@ -19,6 +19,9 @@ Rules:
 - If a value is missing, ambiguous or unreadable, simply do not return that fact. Never return a fact with an empty value or quote. Do not guess to fill gaps.
 - "quote" must be a verbatim fragment copied character for character from the source that supports the value. It must not be paraphrased, translated or stitched together from distant parts.
 - "value" keeps the source language. Do not translate.
+- The code checks every fact with these exact rules, and a fact that fails them is thrown away, so the candidate gets asked about something they already told us:
+  - For every field except dates, "value" must be copied character for character from "quote" (case and spacing aside). Never add, drop, reorder or change words: if the source says "Backend Engineer", the title is "Backend Engineer", not "Senior Backend Engineer". To split a long sentence into items, copy each item as its own fragment. Pick a "quote" that contains the whole value; it may equal the value.
+- When the source states a fact, return it. Leave a fact out only when the source does not state it or states it unclearly.
 - Dates use the YYYY-MM format. If only a year is given, the month is unknown: omit the fact rather than inventing one. Use "present" for an ongoing end date.
 - Responsibilities describe what the candidate did; achievements are results, ideally measurable. Split them into separate atomic items, one idea per item. Do not duplicate the same statement in both lists.
 - Skills belong to the job where they were used. Only list a skill if the source ties it to that job.

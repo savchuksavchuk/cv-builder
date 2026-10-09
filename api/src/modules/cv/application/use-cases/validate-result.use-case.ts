@@ -1,7 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { LlmService } from '../../../shared/services/llm.service';
 import { TransactionService } from '../../../shared/services/transaction.service';
-import { MAX_COMPOSE_REGENERATIONS } from '../../domain/constants/cv-limits.constants';
 import {
   STEP_EFFORT,
   STEP_MODELS,
@@ -11,11 +10,9 @@ import { CV_REPOSITORY } from '../../domain/repositories/cv.repository';
 import type { CvRepository } from '../../domain/repositories/cv.repository';
 import { CvStatus } from '../../domain/types/cv-status';
 import { CvStep } from '../../domain/types/cv-step';
-import { sourceValues } from '../../domain/utils/facts/source-values';
 import {
   Verdict,
   reviewDocument,
-  sanitizeDocument,
 } from '../../domain/utils/document/review-document';
 import { validateResultOutput } from '../llm/validate-result/validate-result.output';
 import {
@@ -35,36 +32,17 @@ export class ValidateResultUseCase {
   ) {}
 
   async execute(cv: Cv): Promise<void> {
-    const document = cv.document;
-
-    if (!document) {
+    if (!cv.document) {
       throw new Error('CV has no document to validate');
     }
 
-    const values = sourceValues(cv.facts);
+    const verdict = await this.judge(cv.document, cv.facts);
+    const reviewed = cv.applyReview(
+      reviewDocument(cv.document, verdict, cv.facts),
+    );
 
-    const verdict = await this.judge(document, values);
-
-    const review = reviewDocument(document, verdict);
-    const rejected = review.rejectedBullets.size > 0 || review.summaryRejected;
-
-    if (rejected && cv.composeRegenerations < MAX_COMPOSE_REGENERATIONS) {
-      const result = cv.rejectComposition(review.feedback);
-      if (!result.success) {
-        throw new Error(result.message);
-      }
-    } else {
-      const applied = cv.applyValidation(
-        rejected ? sanitizeDocument(document, review, values) : document,
-      );
-      if (!applied.success) {
-        throw new Error(applied.message);
-      }
-
-      const finished = cv.finishStep(CvStep.ValidateResult);
-      if (!finished.success) {
-        throw new Error(finished.message);
-      }
+    if (!reviewed.success) {
+      throw new Error(reviewed.message);
     }
 
     await this.transaction.run(async () => {
@@ -81,14 +59,14 @@ export class ValidateResultUseCase {
 
   private async judge(
     document: NonNullable<Cv['document']>,
-    values: Map<string, string>,
+    facts: Cv['facts'],
   ): Promise<Verdict> {
     const generated = await this.llm.generateObject({
       model: STEP_MODELS[CvStep.ValidateResult]!,
       effort: STEP_EFFORT[CvStep.ValidateResult],
       schema: validateResultOutput,
       system: VALIDATE_RESULT_SYSTEM,
-      prompt: buildValidateResultPrompt(document, values),
+      prompt: buildValidateResultPrompt(document, facts),
     });
 
     if (!generated.success || !generated.dto) {

@@ -10,6 +10,7 @@ import {
   NEXT_STEP,
 } from '../constants/cv-pipeline.constants';
 import { normalizeText } from '../utils/normalize-text';
+import { Review } from '../utils/document/review-document';
 import { verifyFacts } from '../utils/facts/verify-facts';
 import { CvDocument, CvDocumentPatch } from '../types/cv-document';
 import { CvStatus } from '../types/cv-status';
@@ -339,7 +340,7 @@ export class Cv {
     return builder.setSuccess(true).build();
   }
 
-  applyValidation(document: CvDocument): Result {
+  applyReview({ feedback, safeDocument }: Review): Result {
     const builder = new ResultBuilder();
 
     if (
@@ -352,30 +353,19 @@ export class Cv {
         .build();
     }
 
-    this.document = document;
-    this.composeFeedback = [];
-    this.touch();
-
-    return builder.setSuccess(true).build();
-  }
-
-  rejectComposition(feedback: string[]): Result {
-    const builder = new ResultBuilder();
-
     if (
-      this.status !== CvStatus.Processing ||
-      this.currentStep !== CvStep.ValidateResult ||
-      this.composeRegenerations >= MAX_COMPOSE_REGENERATIONS
+      feedback.length &&
+      this.composeRegenerations < MAX_COMPOSE_REGENERATIONS
     ) {
-      return builder
-        .setSuccess(false)
-        .setMessage('CV composition cannot be regenerated')
-        .build();
+      this.composeRegenerations += 1;
+      this.composeFeedback = feedback;
+      this.currentStep = CvStep.ComposeCv;
+    } else {
+      this.document = safeDocument;
+      this.composeFeedback = [];
+      this.status = CvStatus.Completed;
+      this.currentStep = null;
     }
-
-    this.composeRegenerations += 1;
-    this.composeFeedback = feedback;
-    this.currentStep = CvStep.ComposeCv;
     this.touch();
 
     return builder.setSuccess(true).build();
