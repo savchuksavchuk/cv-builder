@@ -7,19 +7,20 @@
   "license": "UNLICENSED",
   "scripts": {
     "build": "nest build",
-    "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\" \"evals/**/*.ts\"",
+    "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
-    "lint": "eslint \"{src,apps,libs,test,evals}/**/*.ts\" --fix",
-    "test": "jest",
+    "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
+    "test:unit": "jest",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./test/jest-e2e.json",
-    "eval": "evalite",
-    "eval:dev": "evalite watch",
+    "test:integration": "vitest run --config vitest.integration.config.ts",
+    "test:eval": "evalite",
+    "test:eval:dev": "evalite watch",
+    "test:all": "npm run test:unit && npm run test:integration && npm run test:eval",
     "migration:create": "nest build && MIKRO_ORM_MIGRATIONS_PATH=src/database/migrations mikro-orm migration:create",
     "prebuild": "npm --prefix ../packages/cv-template run build"
   },
@@ -55,6 +56,7 @@
     "@nestjs/cli": "^11.0.0",
     "@nestjs/schematics": "^11.0.0",
     "@nestjs/testing": "^11.0.1",
+    "@testcontainers/postgresql": "12.2.0",
     "@types/cookie-parser": "^1.4.10",
     "@types/express": "^5.0.0",
     "@types/jest": "^30.0.0",
@@ -70,6 +72,7 @@
     "prettier": "^3.4.2",
     "source-map-support": "^0.5.21",
     "supertest": "^7.0.0",
+    "testcontainers": "12.2.0",
     "ts-jest": "^29.2.5",
     "ts-loader": "^9.5.2",
     "ts-node": "^10.9.2",
@@ -84,15 +87,18 @@
       "json",
       "ts"
     ],
-    "rootDir": "src",
+    "rootDir": ".",
+    "roots": [
+      "<rootDir>/test/unit"
+    ],
     "testRegex": ".*\\.spec\\.ts$",
     "transform": {
       "^.+\\.(t|j)s$": "ts-jest"
     },
     "collectCoverageFrom": [
-      "**/*.(t|j)s"
+      "src/**/*.(t|j)s"
     ],
-    "coverageDirectory": "../coverage",
+    "coverageDirectory": "coverage",
     "testEnvironment": "node"
   },
   "mikro-orm": {

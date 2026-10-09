@@ -47,13 +47,19 @@ $ npm run start:prod
 ## Run tests
 
 ```bash
-# unit tests
-$ npm run test
+# unit tests (jest)
+$ npm run test:unit
 
-# e2e tests
-$ npm run test:e2e
+# integration tests against a real Postgres in Docker (needs Docker running)
+$ npm run test:integration
 
-# test coverage
+# evals of the LLM steps (need ANTHROPIC_API_KEY, they call the API)
+$ npm run test:eval
+
+# all of the above, stopping at the first failure
+$ npm run test:all
+
+# unit test coverage
 $ npm run test:cov
 ```
 
