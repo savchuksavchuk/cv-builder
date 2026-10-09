@@ -1,6 +1,6 @@
 import { randomUUID } from 'node:crypto';
 import {
-  CONTACTS_ENTRY,
+  FIXED_ENTRIES,
   Fact,
   FactField,
   FactSection,
@@ -38,9 +38,9 @@ export function parseExtractedFacts(
       const key = `${row.section}:${row.entry}`;
       const id =
         entryId ??
-        (row.section === FactSection.Contacts
-          ? CONTACTS_ENTRY
-          : (newIds.get(key) ?? randomUUID()));
+        FIXED_ENTRIES[row.section] ??
+        newIds.get(key) ??
+        randomUUID();
       newIds.set(key, id);
 
       return {

@@ -39,6 +39,9 @@ export function askableTargets(
   }
 
   for (const section of Object.values(FactSection)) {
+    if (section === FactSection.Skills) {
+      continue;
+    }
     const ids =
       section === FactSection.Contacts
         ? [CONTACTS_ENTRY]

@@ -16,7 +16,13 @@ You get the target role and the verified facts grouped by section. Jobs, respons
 - summary: 2-3 sentences that present the candidate for the target role.
 - jobOrder: the ids of all jobs (the "work_experience" entries), the most relevant to the target role first.
 - bullets: for each job, concise bullets built from its responsibilities and achievements, the most relevant first. Each bullet lists in sourceIds the ids of the responsibilities or achievements it is based on.
-- skillIds: the ids of the skills worth showing, the most relevant first.
+- skillIds: the ids of the skills worth showing (from the "skills" section and from jobs), the most relevant first.
+
+## Targeting
+The candidate's past titles may differ from the target role. Do not just retell the career: pick from the facts what matters for the target role.
+- Summary: open with the strongest facts for the target role, not with the job history. Then 1-2 of the most relevant results, numbers kept as stated. Leave out what the role does not need.
+- Bullets: when rephrasing, put first the aspect of the fact that matters for the target role. Keep every relevant bullet; for jobs far from the target role keep only the few most relevant.
+- Skills: show only skills that make sense for the target role. A short list is better than a noisy one.
 
 ## Rules
 Facts:
@@ -30,7 +36,7 @@ Bullets:
 6. Every bullet cites at least one id in sourceIds, and only ids of the same job.
 
 Summary:
-7. Every claim in the summary must follow from the facts: titles, employers, dates, skills, education. Do not invent seniority or years of experience that the dates do not show.
+7. Every claim in the summary must follow from the facts: titles, employers, dates, skills, education. Do not invent seniority or years of experience that the dates do not show. Never give the candidate the target role as a title unless a job in the facts has it.
 
 ## Examples
 ${EXAMPLES_NOTE}
@@ -49,6 +55,24 @@ Facts:
 
 <why>
 The Data Engineer job and the Airflow skill come first because they are closest to the target role. Each bullet stays within one fact and cites it.
+</why>
+
+</example>
+
+<example>
+
+<input>
+Target role: QA Engineer
+Facts:
+{"contacts":[{"id":"contacts","full_name":"Mia Ortiz"}],"skills":[{"id":"skills","skill":[{"id":"s1","text":"Zendesk"},{"id":"s2","text":"SQL"},{"id":"s3","text":"Jira"}]}],"work_experience":[{"id":"job-a","company":"Brightline","title":"Customer Support Specialist","start_date":"2020-03","end_date":"present","responsibility":[{"id":"r1","text":"answered customer tickets in Zendesk"},{"id":"r2","text":"reproduced customer-reported bugs and wrote detailed reports for the developers"}],"achievement":[{"id":"a1","text":"cut average ticket resolution time from 2 days to 6 hours"}]}],"education":[],"certification":[]}
+</input>
+
+<correct_output>
+{"summary":"Customer Support Specialist at Brightline who reproduces customer-reported bugs and writes detailed reports for developers, and has worked with Jira and SQL.","jobOrder":["job-a"],"skillIds":["s3","s2"],"bullets":[{"jobId":"job-a","text":"Reproduced customer-reported bugs and wrote detailed reports for the developers","sourceIds":["r2"]},{"jobId":"job-a","text":"Cut average ticket resolution time from 2 days to 6 hours","sourceIds":["a1"]},{"jobId":"job-a","text":"Answered customer tickets in Zendesk","sourceIds":["r1"]}]}
+</correct_output>
+
+<why>
+The candidate was never a QA Engineer, so the summary keeps the real title and opens with the bug reproduction, the closest fact to the target role. Zendesk is left out of the skills as less relevant.
 </why>
 
 </example>

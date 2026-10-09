@@ -1,8 +1,10 @@
 export const INITIAL_USER_INPUT_SOURCE = 'initial_user_input';
 export const CONTACTS_ENTRY = 'contacts';
+export const SKILLS_ENTRY = 'skills';
 
 export enum FactSection {
   Contacts = 'contacts',
+  Skills = 'skills',
   WorkExperience = 'work_experience',
   Education = 'education',
   Certification = 'certification',
@@ -37,6 +39,7 @@ export const SECTION_FIELDS: Record<FactSection, FactField[]> = {
     FactField.Location,
     FactField.Link,
   ],
+  [FactSection.Skills]: [FactField.Skill],
   [FactSection.WorkExperience]: [
     FactField.Company,
     FactField.Title,
@@ -59,6 +62,11 @@ export const SECTION_FIELDS: Record<FactSection, FactField[]> = {
     FactField.Issuer,
     FactField.IssueDate,
   ],
+};
+
+export const FIXED_ENTRIES: Partial<Record<FactSection, string>> = {
+  [FactSection.Contacts]: CONTACTS_ENTRY,
+  [FactSection.Skills]: SKILLS_ENTRY,
 };
 
 export const MULTI_VALUE_FIELDS: ReadonlySet<FactField> = new Set([

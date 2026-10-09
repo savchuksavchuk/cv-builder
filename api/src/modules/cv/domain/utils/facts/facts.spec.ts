@@ -54,6 +54,24 @@ describe('parseExtractedFacts', () => {
     expect(entries(facts, FactSection.Contacts)[0].id).toBe('contacts');
     expect(facts).toHaveLength(4);
   });
+
+  it('puts standalone skills in one fixed entry and never asks about them', () => {
+    const skills = parseExtractedFacts(
+      [
+        raw(FactSection.Skills, 0, FactField.Skill, 'Go'),
+        raw(FactSection.Skills, 0, FactField.Skill, 'SQL'),
+      ],
+      'src',
+    );
+
+    expect(entries(skills, FactSection.Skills)).toHaveLength(1);
+    expect(entries(skills, FactSection.Skills)[0].id).toBe('skills');
+    expect(
+      [...askableTargets(skills, []).values()].some(
+        (target) => target.section === FactSection.Skills,
+      ),
+    ).toBe(false);
+  });
 });
 
 describe('verifyFacts', () => {
