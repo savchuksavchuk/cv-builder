@@ -1,5 +1,3 @@
-// Fakes and fixtures shared by the specs of the cv use cases.
-
 import { Result, ResultBuilder } from '../../../common/classes/result.class';
 import { Page } from '../../../common/types/page.type';
 import { Cv } from '../domain/entities/cv.entity';
@@ -10,7 +8,6 @@ import { FactField, FactSection } from '../domain/types/fact';
 import { QuestionStatus } from '../domain/types/question';
 import { CvJobsPort } from '../application/ports/cv-jobs.port';
 
-// Like the real repository, it hands out a CV only to its owner.
 export class InMemoryCvRepository implements CvRepository {
   private readonly cvs = new Map<string, Cv>();
 
@@ -45,7 +42,6 @@ export class InMemoryCvRepository implements CvRepository {
   }
 }
 
-// Remembers which steps were queued.
 export class FakeCvJobs implements CvJobsPort {
   readonly enqueued: { cvId: string; step: CvStep }[] = [];
 
